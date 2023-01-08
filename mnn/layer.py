@@ -55,6 +55,17 @@ class LinearLayer(BaseLayer):
         return grads_x
 
 
+class ReluLayer(BaseLayer):
+    def forward(self, inputs, feedbacks=None):
+        self.last_inputs = inputs
+        return Tensor.maximum(inputs, 0.0)
+
+    def backward(self, gradients):
+        flat_jacob = Tensor.ones_like(self.last_inputs)
+        flat_jacob[self.last_inputs < 0] = 0.0
+        return gradients * flat_jacob
+
+
 if __name__ == '__main__':
     B = 12
     inputs = Tensor.randn(B, 3, 1)
@@ -62,4 +73,10 @@ if __name__ == '__main__':
     outputs = linear_layer.forward(inputs)
     print(outputs.shape)
     gradients = linear_layer.backward(Tensor.randn(B, 2, 1))
+    print(gradients.shape)
+
+    relu_layer = ReluLayer()
+    outputs = relu_layer.forward(inputs)
+    print(outputs.shape)
+    gradients = relu_layer.backward(Tensor.randn(B, 3, 1))
     print(gradients.shape)

@@ -32,7 +32,10 @@ class Tensor():
         return Tensor(self._data.__getitem__(item))
 
     def __setitem__(self, key, val):
-        self._data.__setitem__(key, val)
+        if isinstance(key, Tensor):
+            self._data.__setitem__(key._data, val)
+        else:
+            self._data.__setitem__(key, val)
 
     def __neg__(self, x):
         return Tensor(-x._data)
@@ -52,6 +55,18 @@ class Tensor():
     def __truediv__(self, x):
         return Tensor(self._data / x)
 
+    def __lt__(self, x):
+        return Tensor(self._data < x)
+
+    def __le__(self, x):
+        return Tensor(self._data <= x)
+
+    def __gt__(self, x):
+        return Tensor(self._data > x)
+
+    def __ge__(self, x):
+        return Tensor(self._data >= x)
+
     @staticmethod
     def zeros(shape):
         return Tensor(cp.zeros(shape))
@@ -59,6 +74,14 @@ class Tensor():
     @staticmethod
     def randn(*shape):
         return Tensor(cp.random.randn(*shape))
+
+    @staticmethod
+    def ones_like(tensor):
+        return Tensor(cp.ones_like(tensor._data))
+
+    @staticmethod
+    def maximum(*args, **kwargs):
+        return Tensor(cp.maximum(*args, **kwargs))
 
     def diag_embed(self):
         last_dim = self.shape[-1]
