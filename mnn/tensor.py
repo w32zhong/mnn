@@ -3,7 +3,10 @@ import cupy as cp
 
 class Tensor():
     def __init__(self, data):
-        self._data = data
+        if type(data) in (tuple, list):
+            self._data = cp.array(data)
+        else:
+            self._data = data
 
     def __repr__(self):
         return self._data.__repr__()
@@ -31,6 +34,21 @@ class Tensor():
     def __setitem__(self, key, val):
         self._data.__setitem__(key, val)
 
+    def __neg__(self, x):
+        return Tensor(-x._data)
+
+    def __add__(self, x):
+        return Tensor(self._data + x._data)
+
+    def __sub__(self, x):
+        return Tensor(self._data - x._data)
+
+    def __mul__(self, x):
+        return Tensor(self._data * x._data)
+
+    def __matmul__(self, x):
+        return Tensor(self._data @ x._data)
+
     @staticmethod
     def zeros(shape):
         return Tensor(cp.zeros(shape))
@@ -52,6 +70,7 @@ class Tensor():
         ) * cp.eye(last_dim, last_dim)
         return Tensor(diag)
 
+
 if __name__ == '__main__':
     d = Tensor.randn(1, 3, 1)
     s = d.squeeze()
@@ -59,3 +78,6 @@ if __name__ == '__main__':
     d = d.diag_embed()
     d[0][2][0] = 0.123
     print(d.T)
+    s = d.sum(axis=1)
+    print(s)
+    print(s + Tensor([[1.0, 2.0, 3.0]]))
