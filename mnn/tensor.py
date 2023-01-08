@@ -49,11 +49,17 @@ class Tensor():
     def __mul__(self, x):
         return Tensor(self._data * x._data)
 
+    def __rmul__(self, x):
+        return Tensor(self._data * x)
+
     def __matmul__(self, x):
         return Tensor(self._data @ x._data)
 
     def __truediv__(self, x):
         return Tensor(self._data / x)
+
+    def __pow__(self, x):
+        return Tensor(self._data ** x)
 
     def __lt__(self, x):
         return Tensor(self._data < x)
@@ -95,6 +101,9 @@ class Tensor():
             (*tensor.shape, last_dim)
         ) * cp.eye(last_dim, last_dim)
         return Tensor(diag)
+
+    def unsqueeze(self, *args, **kwargs):
+        return Tensor(cp.expand_dims(self._data, *args, **kwargs))
 
 
 if __name__ == '__main__':

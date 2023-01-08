@@ -66,9 +66,23 @@ class ReluLayer(BaseLayer):
         return gradients * flat_jacob
 
 
+class MSELossLayer(BaseLayer):
+    def forward(self, inputs, feedbacks=None):
+        inputs = inputs.squeeze(-1)
+        self.last_error = inputs - feedbacks
+        batch_size = inputs.shape[0]
+        batch_loss = ((inputs - feedbacks) ** 2).sum(axis=1)
+        return self.batch_reduced_val(batch_loss)
+
+    def backward(self):
+        gradients = 2 * self.last_error
+        return gradients.unsqueeze(axis=-1)
+
+
 if __name__ == '__main__':
     B = 12
     inputs = Tensor.randn(B, 3, 1)
+
     linear_layer = LinearLayer(3, 2)
     outputs = linear_layer.forward(inputs)
     print(outputs.shape)
@@ -79,4 +93,10 @@ if __name__ == '__main__':
     outputs = relu_layer.forward(inputs)
     print(outputs.shape)
     gradients = relu_layer.backward(Tensor.randn(B, 3, 1))
+    print(gradients.shape)
+
+    loss_layer = MSELossLayer()
+    outputs = loss_layer.forward(inputs, feedbacks=Tensor.randn(B, 3))
+    print(outputs)
+    gradients = loss_layer.backward()
     print(gradients.shape)
