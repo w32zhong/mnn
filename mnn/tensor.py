@@ -49,6 +49,9 @@ class Tensor():
     def __matmul__(self, x):
         return Tensor(self._data @ x._data)
 
+    def __truediv__(self, x):
+        return Tensor(self._data / x)
+
     @staticmethod
     def zeros(shape):
         return Tensor(cp.zeros(shape))

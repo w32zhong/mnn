@@ -61,3 +61,5 @@ if __name__ == '__main__':
     linear_layer = LinearLayer(3, 2)
     outputs = linear_layer.forward(inputs)
     print(outputs.shape)
+    gradients = linear_layer.backward(Tensor.randn(B, 2, 1))
+    print(gradients.shape)
