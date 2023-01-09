@@ -64,7 +64,7 @@ This is the gradients to be back propagated to upstream, instead of being used t
 
 The Jacobian w.r.t. $w$ is, according to $y_i = w_{i,1} x_1 + w_{i,2} x_2 + ... + w_{i,n} x_n + b_i$, 
 
-$$ J_x = \begin{bmatrix} \frac{\partial y_1}{\partial x_1} & \frac{\partial y_1}{\partial x_2} & ... & \frac{\partial y_1}{\partial x_n} \\\\ \frac{\partial y_2}{\partial x_1} & \frac{\partial y_2}{\partial x_2} & ... & \frac{\partial y_2}{\partial x_n} \\\\ \vdots & \ddots \\\\ \frac{\partial y_m}{\partial x_1} & \frac{\partial y_m}{\partial x_2} & ... & \frac{\partial y_m}{\partial x_n} \\\\ \end{bmatrix} =  \begin{bmatrix} w_{1,1} & w_{1, 2} & ... & w_{1, n} \\\\ w_{2,1} & w_{2, 2} & ... & w_{2, n} \\\\ \vdots \\\\ w_{m,1} & w_{m, 2} & ... & w_{m, n} \\\\ \end{bmatrix} = W $$ 
+$$ J_x = \begin{bmatrix} \frac{\partial y_1}{\partial x_1} & \frac{\partial y_1}{\partial x_2} & ... & \frac{\partial y_1}{\partial x_n} \\\\ \frac{\partial y_2}{\partial x_1} & \frac{\partial y_2}{\partial x_2} & ... & \frac{\partial y_2}{\partial x_n} \\\\ \vdots & \ddots \\\\ \frac{\partial y_m}{\partial x_1} & \frac{\partial y_m}{\partial x_2} & ... & \frac{\partial y_m}{\partial x_n} \\\\ \end{bmatrix} = \begin{bmatrix} w_{1,1} & w_{1, 2} & ... & w_{1, n} \\\\ w_{2,1} & w_{2, 2} & ... & w_{2, n} \\\\ \vdots \\\\ w_{m,1} & w_{m, 2} & ... & w_{m, n} \\\\ \end{bmatrix} = W $$ 
 
 as a result, 
 

@@ -134,7 +134,7 @@ class LinearLayer(BaseLayer):
         \vdots & \ddots \\\\
         \frac{\partial y_m}{\partial x_1} & \frac{\partial y_m}{\partial x_2} & ... & \frac{\partial y_m}{\partial x_n} \\\\
         \end{bmatrix}
-        = 
+        =
         \begin{bmatrix}
         w_{1,1} & w_{1, 2} & ... & w_{1, n} \\\\
         w_{2,1} & w_{2, 2} & ... & w_{2, n} \\\\
@@ -178,6 +178,9 @@ class ReluLayer(BaseLayer):
 
 class MSELossLayer(BaseLayer):
     def forward(self, inputs, feedbacks=None):
+        r'''
+        Loss $\ell_i = \sum_{i} (x_i - y_i)^2$
+        '''
         inputs = inputs.squeeze(-1)
         self.last_error = inputs - feedbacks
         batch_size = inputs.shape[0]
@@ -185,6 +188,9 @@ class MSELossLayer(BaseLayer):
         return self._batch_reduced(batch_loss)
 
     def backward(self):
+        r'''
+        Gradient $\nabla_x \ell = 2(x - y)$
+        '''
         gradients = 2 * self.last_error
         return gradients.unsqueeze(axis=-1)
 
