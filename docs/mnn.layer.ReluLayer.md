@@ -46,7 +46,7 @@ forward(inputs, feedbacks=None)
 
 Relu activation function: 
 
-$$ f_i(x) = \left\{ \begin{aligned} x && (x \ge 0) \\\\ 0 && (\text{otherwise}) \end{aligned} \right. $$ 
+$$ f_i(x) = \left \\{ \begin{aligned} x && (x \ge 0) \\\\ 0 && (\text{otherwise}) \end{aligned} \right. $$ 
 
 ---
 

@@ -171,7 +171,7 @@ class ReluLayer(BaseLayer):
         Relu activation function:
 
         $$
-        f_i(x) = \left\{
+        f_i(x) = \left \\{
         \begin{aligned}
         x && (x \ge 0) \\\\
         0 && (\text{otherwise})
