@@ -1,5 +1,9 @@
 from lazydocs import generate_docs
-import mnn.layer
+import shutil
 
 
-generate_docs(["mnn.layer"], output_path="./docs")
+docs = './docs'
+shutil.rmtree(docs)
+generate_docs([
+    "mnn.layer"
+    ], output_path=docs, watermark=False)
