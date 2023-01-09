@@ -29,6 +29,14 @@ class BaseLayer():
 
 class LinearLayer(BaseLayer):
     def __init__(self, *shape, bias=True):
+        super().__init__()
+        n, m = shape
+        self.params['w'] = Tensor.randn(1, m, n)
+        self.bias = bias
+        if self.bias:
+            self.params['b'] = Tensor.randn(1, m, 1)
+
+    def forward(self, inputs, feedbacks=None):
         r'''
         An linear layer to compute $y_{m \times 1} = W_{m \times n} x_{n \times 1} + b_{m \times 1}$,
         where
@@ -42,14 +50,6 @@ class LinearLayer(BaseLayer):
         \end{bmatrix}
         $$
         '''
-        super().__init__()
-        n, m = shape
-        self.params['w'] = Tensor.randn(1, m, n)
-        self.bias = bias
-        if self.bias:
-            self.params['b'] = Tensor.randn(1, m, 1)
-
-    def forward(self, inputs, feedbacks=None):
         self.last_inputs = inputs
         if self.bias:
             return self.params['w'] @ inputs + self.params['b']
@@ -57,15 +57,111 @@ class LinearLayer(BaseLayer):
             return self.params['w'] @ inputs
 
     def backward(self, gradients):
-        grads_w = gradients @ self.last_inputs.T
+        r'''
+        ## Gradients w.r.t. $W$
+
+        Because $y_i = w_{i,1} x_1 + w_{i,2} x_2 + ... + w_{i,n} x_n + b_i$,
+        we have
+        $\partial y_i / \partial w_{i,j} = x_j$ and this derivative is $0$
+        for $w_{k,j}$ when $k \not= i$.
+
+        When we "flatten" the $W$ into a "long vector" $w$,
+        the Jacobian w.r.t. $w$ then becomes:
+
+        $$
+        J_w = \begin{bmatrix}
+        x_1 & x_2 & ... & x_n &   0 &   0 & ... &   0 &  0  & 0   & 0   \\\\
+        0   & 0   & ... & 0   & x_1 & x_2 & ... &   0 &  0  & 0   & 0   \\\\
+        \vdots \\\\
+        0   & 0   & ... & 0   & 0   & 0   & ... & x_1 & x_2 & ... & x_n \\\\
+        \end{bmatrix}_{m \times (mn)}
+        $$
+
+        If we chain the gradient product
+        (assuming the final loss is scaler $\ell$):
+
+        $$
+        \nabla^T_w \ell = \nabla^T_y \ell \times J_w =
+        \begin{bmatrix}
+            x_1 \frac{\partial \ell}{\partial y_1} & x_2 \frac{\partial \ell}{\partial y_1} & ... & x_n \frac{\partial \ell}{\partial y_1} &
+            x_1 \frac{\partial \ell}{\partial y_2} & x_2 \frac{\partial \ell}{\partial y_2} & ... & x_n \frac{\partial \ell}{\partial y_2} &
+            ...
+        \end{bmatrix}
+        $$
+
+        As apparently it is a recycling patten, we can "unroll"
+        the Jacobian to a matrix so that it matches the dimension of $W$:
+
+        $$
+        \nabla_W \ell =
+        \begin{bmatrix}
+            x_1 \frac{\partial \ell}{\partial y_1} & x_2 \frac{\partial \ell}{\partial y_1} & ... & x_n \frac{\partial \ell}{\partial y_1} \\
+            x_1 \frac{\partial \ell}{\partial y_2} & x_2 \frac{\partial \ell}{\partial y_2} & ... & x_n \frac{\partial \ell}{\partial y_2} \\
+            \vdots
+        \end{bmatrix}
+        $$
+
+        thus it can be written in
+
+        $$
+        \tag{1}
+        \nabla_W \ell = (\nabla_y \ell)_{m \times 1} \times (x^T)_{1 \times n}
+        $$
+
+        ## Gradients w.r.t. $b$
+
+        Because $y_i = w_{i,1} x_1 + w_{i,2} x_2 + ... + w_{i,n} x_n + b_i$,
+        the Jacobian w.r.t. $b$ is an identity matrix, and the gradients of
+        it is just the down-stream gradients:
+
+        $$
+        \tag{2}
+        \nabla^T_b \ell = \nabla^T_y \ell \times J_b =
+        \nabla^T_y \ell \times E = \nabla^T_y \ell
+        $$
+
+        ## Gradients w.r.t. inputs $x$
+
+        This is the gradients to be back propagated to upstream,
+        instead of being used to update the parameters of this layer.
+
+        The Jacobian w.r.t. $w$ is, according to $y_i = w_{i,1} x_1 + w_{i,2} x_2 + ... + w_{i,n} x_n + b_i$,
+
+        $$
+        J_x = \begin{bmatrix}
+        \frac{\partial y_1}{\partial x_1} & \frac{\partial y_1}{\partial x_2} & ... & \frac{\partial y_1}{\partial x_n} \\\\
+        \frac{\partial y_2}{\partial x_1} & \frac{\partial y_2}{\partial x_2} & ... & \frac{\partial y_2}{\partial x_n} \\\\
+        \vdots & \ddots \\\\
+        \frac{\partial y_m}{\partial x_1} & \frac{\partial y_m}{\partial x_2} & ... & \frac{\partial y_m}{\partial x_n} \\\\
+        \end{bmatrix}
+        = 
+        \begin{bmatrix}
+        w_{1,1} & w_{1, 2} & ... & w_{1, n} \\\\
+        w_{2,1} & w_{2, 2} & ... & w_{2, n} \\\\
+        \vdots \\\\
+        w_{m,1} & w_{m, 2} & ... & w_{m, n} \\\\
+        \end{bmatrix}
+        =
+        W
+        $$
+
+        as a result,
+
+        $$
+        \tag{3}
+        \nabla_x \ell = J_x^T \times \nabla_y \ell
+                      =  W^T \times \nabla_y \ell
+        $$
+        '''
+        grads_w = gradients @ self.last_inputs.T # Eq. (1)
         self._accumulate_grads('w', grads_w)
 
         if self.bias:
-            grads_b = gradients
+            grads_b = gradients # Eq. (2)
             self._accumulate_grads('b', grads_b)
 
         jacob_x = self.params['w']
-        grads_x = jacob_x.T @ gradients
+        grads_x = jacob_x.T @ gradients # Eq. (3)
         return grads_x
 
 
