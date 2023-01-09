@@ -38,20 +38,6 @@ backward(gradients)
 
 ---
 
-<a href="../mnn/layer.py#L25"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-## <kbd>method</kbd> `batch_reduced`
-
-```python
-batch_reduced(val)
-```
-
-
-
-
-
----
-
 <a href="../mnn/layer.py#L169"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>method</kbd> `forward`

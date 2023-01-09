@@ -72,20 +72,6 @@ $$ \tag{3} \nabla_x \ell = J_x^T \times \nabla_y \ell  =  W^T \times \nabla_y \e
 
 ---
 
-<a href="../mnn/layer.py#L25"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-## <kbd>method</kbd> `batch_reduced`
-
-```python
-batch_reduced(val)
-```
-
-
-
-
-
----
-
 <a href="../mnn/layer.py#L39"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>method</kbd> `forward`

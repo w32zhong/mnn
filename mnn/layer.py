@@ -11,7 +11,7 @@ class BaseLayer():
         self.grads = {}
 
     def _accumulate_grads(self, key, val):
-        reduced_val = self.batch_reduced(val)
+        reduced_val = self._batch_reduced(val)
         if key in self.grads:
             self.grads[key] += reduced_val
         else:
@@ -22,7 +22,7 @@ class BaseLayer():
             assert grads.shape[1:] == self.params[key].shape[1:]
             self.params[key] -= lr * grads
 
-    def batch_reduced(self, val):
+    def _batch_reduced(self, val):
         batch_size = val.shape[0]
         return val.sum(axis=0, keepdims=True) / batch_size
 
@@ -182,7 +182,7 @@ class MSELossLayer(BaseLayer):
         self.last_error = inputs - feedbacks
         batch_size = inputs.shape[0]
         batch_loss = ((inputs - feedbacks) ** 2).sum(axis=1)
-        return self.batch_reduced(batch_loss)
+        return self._batch_reduced(batch_loss)
 
     def backward(self):
         gradients = 2 * self.last_error
