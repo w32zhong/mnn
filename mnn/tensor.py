@@ -78,6 +78,11 @@ class Tensor():
         return Tensor(cp.zeros(shape))
 
     @staticmethod
+    def randint(*shape, high, low=0):
+        I = cp.random.randint(low, high=high, size=shape)
+        return Tensor(I)
+
+    @staticmethod
     def randn(*shape):
         return Tensor(cp.random.randn(*shape))
 
