@@ -393,11 +393,46 @@ class LogSoftmaxLayer(BaseLayer):
         return jacob_x.T @ gradients
 
 
+class NllLossLayer(BaseLayer):
+    r'''
+    This is to simulate PyTorch NLL layer which computes a negative expectation loss.
+    Labels are passed in as integer indices.
+    '''
+    def forward(self, inputs, feedbacks=None):
+        r'''
+        $$
+        \ell(q) = -\sum^n_{i=0} p_i q_i = -q_l
+        $$
+
+        where $p \in \{0, 1\}$ indicates true probability,
+        but in actual implementation,
+        the label is given as an index $l \in \mathbb{N}$.
+        '''
+        batch_size = inputs.shape[0]
+        inputs = inputs.squeeze(-1)
+        indices = feedbacks.squeeze(-1)
+        self.saved_context = (inputs, indices, batch_size)
+
+        neg_likelihood = - inputs[Tensor.arange(batch_size), indices]
+        return self._batch_reduced(neg_likelihood)
+
+    def backward(self):
+        r'''
+        In this case, the gradient vector w.r.t. $q$ is simply
+        an almost-zero vector $v$ where $v_l = -1$.
+        '''
+        inputs, indices, batch_size = self.saved_context
+        jacob_q = Tensor.zeros(inputs.shape)
+        jacob_q[Tensor.arange(batch_size), indices] = -1.0
+        return jacob_q.unsqueeze(-1)
+
+
 if __name__ == '__main__':
     B = 12
-    inputs = Tensor.randn(B, 3, 1)
+    D = 3
+    inputs = Tensor.randn(B, D, 1)
 
-    linear_layer = LinearLayer(3, 2)
+    linear_layer = LinearLayer(D, 2)
     outputs = linear_layer.forward(inputs)
     print(outputs.shape)
     gradients = linear_layer.backward(Tensor.randn(B, 2, 1))
@@ -406,11 +441,11 @@ if __name__ == '__main__':
     relu_layer = ReluLayer()
     outputs = relu_layer.forward(inputs)
     print(outputs.shape)
-    gradients = relu_layer.backward(Tensor.randn(B, 3, 1))
+    gradients = relu_layer.backward(Tensor.randn(B, D, 1))
     print(gradients.shape)
 
     loss_layer = MSELossLayer()
-    outputs = loss_layer.forward(inputs, feedbacks=Tensor.randn(B, 3))
+    outputs = loss_layer.forward(inputs, feedbacks=Tensor.randn(B, D))
     print(outputs)
     gradients = loss_layer.backward()
     print(gradients.shape)
@@ -418,17 +453,24 @@ if __name__ == '__main__':
     softmax_layer = SoftmaxLayer()
     outputs = softmax_layer.forward(inputs)
     print(outputs.shape)
-    gradients = softmax_layer.backward(Tensor.randn(B, 3, 1))
+    gradients = softmax_layer.backward(Tensor.randn(B, D, 1))
     print(gradients.shape)
 
     log_layer = LogLayer()
     outputs = log_layer.forward(inputs)
     print(outputs.shape)
-    gradients = log_layer.backward(Tensor.randn(B, 3, 1))
+    gradients = log_layer.backward(Tensor.randn(B, D, 1))
     print(gradients.shape)
 
     log_softmax_layer = LogSoftmaxLayer()
     outputs = log_softmax_layer.forward(inputs)
     print(outputs.shape)
-    gradients = log_softmax_layer.backward(Tensor.randn(B, 3, 1))
+    gradients = log_softmax_layer.backward(Tensor.randn(B, D, 1))
+    print(gradients.shape)
+
+    nll_loss_layer = NllLossLayer()
+    outputs = nll_loss_layer.forward(inputs,
+        feedbacks=Tensor.randint(shape=(B, 1), high=D))
+    print(outputs.shape)
+    gradients = nll_loss_layer.backward()
     print(gradients.shape)

@@ -29,16 +29,20 @@ class Tensor():
             return attr
 
     def __getitem__(self, item):
+        if isinstance(item, tuple):
+            item = tuple(map(lambda x: x._data, item))
         return Tensor(self._data.__getitem__(item))
 
     def __setitem__(self, key, val):
         if isinstance(key, Tensor):
             self._data.__setitem__(key._data, val)
+        elif isinstance(key, tuple):
+            key = tuple(map(lambda x: x._data, key))
         else:
             self._data.__setitem__(key, val)
 
-    def __neg__(self, x):
-        return Tensor(-x._data)
+    def __neg__(self):
+        return Tensor(- self._data)
 
     def __add__(self, x):
         return Tensor(self._data + x._data)
@@ -81,7 +85,7 @@ class Tensor():
         return Tensor(cp.zeros(shape))
 
     @staticmethod
-    def randint(*shape, high, low=0):
+    def randint(shape, high, low=0):
         I = cp.random.randint(low, high=high, size=shape)
         return Tensor(I)
 
@@ -108,6 +112,10 @@ class Tensor():
     @staticmethod
     def log(*args, **kwargs):
         return Tensor(cp.log(*args, **kwargs))
+
+    @staticmethod
+    def arange(*args, **kwargs):
+        return Tensor(cp.arange(*args, **kwargs))
 
     def stacked(self, height=None):
         width = self.shape[-1]
