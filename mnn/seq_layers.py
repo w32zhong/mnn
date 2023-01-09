@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
     debug = False
     for ep in range(1 if debug else 10):
-        outputs = net(inputs, targets, debug=debug)
-        print(outputs)
+        loss = net(inputs, targets, debug=debug)
+        print(f'epoch#{ep + 1}', loss)
         net.backward(debug=debug)
         net.step()
