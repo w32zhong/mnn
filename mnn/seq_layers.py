@@ -1,5 +1,5 @@
-from tensor import Tensor
-from layer import *
+from .tensor import Tensor
+from .layer import *
 
 
 class SequentialLayers():
