@@ -27,7 +27,7 @@ class SequentialLayers():
 
     iff $dt \rightarrow 0$ implies $\Delta x \rightarrow 0$ and $\Delta y \rightarrow 0$ (Lipschitz continuity).
 
-    In more general case when $z(t) = f(x(t))$ where $x \in \mathbb{R}^n, t \in \mathbb{R}^m, f: \mathbb{R}^n \rightarrow \mathbb{R}  $ and $ x: \mathbb{R}^m \rightarrow \mathbb{R}^n $,
+    In more general case when $z(t) = f(x(t))$ where $x \in \mathbb{R}^n, t \in \mathbb{R}^m, f: \mathbb{R}^n \rightarrow \mathbb{R}$ and $x: \mathbb{R}^m \rightarrow \mathbb{R}^n$,
 
     $$
     \begin{aligned}

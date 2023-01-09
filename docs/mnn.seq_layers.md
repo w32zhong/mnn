@@ -24,7 +24,7 @@ $$ \begin{aligned}  z'(t) =& \lim_{dt \to 0} \frac{f(x(t+dt), y(t+dt)) - f(x(t),
 
 iff $dt \rightarrow 0$ implies $\Delta x \rightarrow 0$ and $\Delta y \rightarrow 0$ (Lipschitz continuity). 
 
-In more general case when $z(t) = f(x(t))$ where $x \in \mathbb{R}^n, t \in \mathbb{R}^m, f: \mathbb{R}^n \rightarrow \mathbb{R}  $ and $ x: \mathbb{R}^m \rightarrow \mathbb{R}^n $, 
+In more general case when $z(t) = f(x(t))$ where $x \in \mathbb{R}^n, t \in \mathbb{R}^m, f: \mathbb{R}^n \rightarrow \mathbb{R}$ and $x: \mathbb{R}^m \rightarrow \mathbb{R}^n$, 
 
 $$ \begin{aligned} \frac{\partial z}{\partial t_i} =& \begin{bmatrix} \frac{\partial f}{\partial x_1} & ... & \frac{\partial f}{\partial x_n} \end{bmatrix}_{x = x(t)} \cdot \begin{bmatrix} \frac{\partial x_1}{\partial t_i} \\ \vdots \\ \frac{\partial x_n}{\partial t_i} \end{bmatrix} \\\\ \doteq& \nabla_x^T f (x = x(t)) \cdot \begin{bmatrix} \frac{\partial x_1}{\partial t_i} \\ \vdots \\ \frac{\partial x_n}{\partial t_i} \end{bmatrix} \\\\ \end{aligned} $$ 
 
