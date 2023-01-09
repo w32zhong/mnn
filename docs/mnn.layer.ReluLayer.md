@@ -24,7 +24,7 @@ __init__()
 
 ---
 
-<a href="../mnn/layer.py#L173"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L185"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>method</kbd> `backward`
 
@@ -32,9 +32,7 @@ __init__()
 backward(gradients)
 ```
 
-
-
-
+$$ \begin{aligned} \nabla_x \ell =& \nabla_f \ell \cdot \begin{bmatrix} f_1'(x_1) & 0 & ... & 0 \\\\ 0 & f_2'(x_2) & ... & 0 \\\\ \ddots \\\\ 0 & 0 & ... & f_n'(x_n) \end{bmatrix} \\\\ =& \nabla_f \ell \odot \nabla_x f \end{aligned} $$ 
 
 ---
 
@@ -46,9 +44,9 @@ backward(gradients)
 forward(inputs, feedbacks=None)
 ```
 
+Relu activation function: 
 
-
-
+$$ f_i(x) = \left\{ \begin{aligned} x && (x \ge 0) \\\\ 0 && (\text{otherwise}) \end{aligned} \right. $$ 
 
 ---
 

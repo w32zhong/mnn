@@ -59,7 +59,7 @@ class SequentialLayers():
      \end{bmatrix}
     $$
 
-    where the RHS matrix is called the Jacobian matrix $\nabla_t x$.
+    where the RHS matrix is called the Jacobian matrix $J_t x$.
     '''
     def __init__(self, layers):
         self.layers = layers
@@ -80,7 +80,7 @@ class SequentialLayers():
         from down-stream gradients using
 
         $$
-            \nabla_t^T z(t) = \nabla_x^T f (x = x(t)) \cdot \nabla_t x
+            \nabla_t^T z(t) = \nabla_x^T f (x = x(t)) \cdot J_t x
         $$
         '''
         gradients = []

@@ -32,7 +32,7 @@ therefore
 
 $$ \tag{1} \nabla_t^T z(t) \doteq \begin{bmatrix} \frac{\partial f}{\partial t_1}, ..., \frac{\partial f}{\partial t_m} \end{bmatrix} = \nabla_x^T f (x = x(t)) \cdot \begin{bmatrix}  \partial x_1 / \partial t_1 & \partial x_1 / \partial t_2 & ... & \partial x_1 / \partial t_m \\\\  \partial x_2 / \partial t_1 & \partial x_2 / \partial t_2 & ... & \partial x_2 / \partial t_m \\\\  \vdots & \ddots \\\\  \partial x_n / \partial t_1 & \partial x_n / \partial t_2 & ... & \partial x_n / \partial t_m \\\\ \end{bmatrix} $$ 
 
-where the RHS matrix is called the Jacobian matrix $\nabla_t x$. 
+where the RHS matrix is called the Jacobian matrix $J_t x$. 
 
 <a href="../mnn/seq_layers.py#L64"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
@@ -63,7 +63,7 @@ backward(debug=False)
 
 As seen in Eq. (1), we can propagate gradient w.r.t. $t$ back from down-stream gradients using 
 
-$$  \nabla_t^T z(t) = \nabla_x^T f (x = x(t)) \cdot \nabla_t x $$ 
+$$  \nabla_t^T z(t) = \nabla_x^T f (x = x(t)) \cdot J_t x $$ 
 
 ---
 

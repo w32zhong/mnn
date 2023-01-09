@@ -167,10 +167,36 @@ class LinearLayer(BaseLayer):
 
 class ReluLayer(BaseLayer):
     def forward(self, inputs, feedbacks=None):
+        r'''
+        Relu activation function:
+
+        $$
+        f_i(x) = \left\{
+        \begin{aligned}
+        x && (x \ge 0) \\\\
+        0 && (\text{otherwise})
+        \end{aligned}
+        \right.
+        $$
+        '''
         self.last_inputs = inputs
         return Tensor.maximum(inputs, 0.0)
 
     def backward(self, gradients):
+        r'''
+        $$
+        \begin{aligned}
+        \nabla_x \ell =& \nabla_f \ell \cdot
+        \begin{bmatrix}
+        f_1'(x_1) & 0 & ... & 0 \\\\
+        0 & f_2'(x_2) & ... & 0 \\\\
+        \ddots \\\\
+        0 & 0 & ... & f_n'(x_n)
+        \end{bmatrix} \\\\
+        =& \nabla_f \ell \odot \nabla_x f
+        \end{aligned}
+        $$
+        '''
         flat_jacob = Tensor.ones_like(self.last_inputs)
         flat_jacob[self.last_inputs < 0] = 0.0
         return gradients * flat_jacob
