@@ -25,6 +25,10 @@ class SequentialLayers():
             if debug: print('backward', layer.name, ' => ', tmp.shape)
         return gradients
 
+    def step(self):
+        for layer in self.layers:
+            layer.step()
+
 
 if __name__ == '__main__':
     B = 4
@@ -39,7 +43,9 @@ if __name__ == '__main__':
         MSELossLayer()
     ])
 
-    outputs = net(inputs, targets, debug=True)
-    print(outputs.shape)
-
-    net.backward(debug=True)
+    debug = False
+    for ep in range(1 if debug else 10):
+        outputs = net(inputs, targets, debug=debug)
+        print(outputs)
+        net.backward(debug=debug)
+        net.step()

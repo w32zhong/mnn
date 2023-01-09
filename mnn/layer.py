@@ -47,8 +47,9 @@ class LinearLayer(BaseLayer):
         grads_w = gradients @ self.last_inputs.T
         self.accumulate_grads('w', grads_w)
 
-        grads_b = gradients
-        self.accumulate_grads('b', grads_b)
+        if self.bias:
+            grads_b = gradients
+            self.accumulate_grads('b', grads_b)
 
         jacob_x = self.params['w']
         grads_x = jacob_x.T @ gradients
