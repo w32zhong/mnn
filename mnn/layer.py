@@ -1,4 +1,4 @@
-from .tensor import Tensor
+from mnn.tensor import Tensor
 
 
 class BaseLayer():
@@ -95,8 +95,8 @@ class LinearLayer(BaseLayer):
         $$
         \nabla_W \ell =
         \begin{bmatrix}
-            x_1 \frac{\partial \ell}{\partial y_1} & x_2 \frac{\partial \ell}{\partial y_1} & ... & x_n \frac{\partial \ell}{\partial y_1} \\
-            x_1 \frac{\partial \ell}{\partial y_2} & x_2 \frac{\partial \ell}{\partial y_2} & ... & x_n \frac{\partial \ell}{\partial y_2} \\
+            x_1 \frac{\partial \ell}{\partial y_1} & x_2 \frac{\partial \ell}{\partial y_1} & ... & x_n \frac{\partial \ell}{\partial y_1} \\\\
+            x_1 \frac{\partial \ell}{\partial y_2} & x_2 \frac{\partial \ell}{\partial y_2} & ... & x_n \frac{\partial \ell}{\partial y_2} \\\\
             \vdots
         \end{bmatrix}
         $$
@@ -225,6 +225,83 @@ class MSELossLayer(BaseLayer):
         return gradients.unsqueeze(axis=-1)
 
 
+class SoftmaxLayer(BaseLayer):
+    def __init__(self, *shape, axis=1):
+        super().__init__()
+        self.axis = axis
+
+    @staticmethod
+    def stable_softmax(inputs, axis):
+        r'''
+        ## Numerical-stable softmax
+
+        Since some exponentials are quite large numbers, we can use
+
+        $$
+        y_i(x) = \frac{\exp(x_i)}{\sum_j \exp(x_j)}
+        = \frac{\exp(x_i - m)}{\sum_j \exp(x_j - m)}
+        $$
+
+        where $m = \max(x_1, x_2, ...)$.
+        '''
+        inputs_max = inputs.max(axis=axis, keepdims=True)
+        stable_exps = Tensor.exp(inputs - inputs_max)
+        sum_exps = stable_exps.sum(axis=axis, keepdims=True)
+        return stable_exps / sum_exps
+
+    def forward(self, inputs, feedbacks=None):
+        self.saved_forward = SoftmaxLayer.stable_softmax(inputs, self.axis)
+        return self.saved_forward
+
+    def backward(self, gradients):
+        r'''
+        When $i = k$,
+
+        $$
+        \begin{aligned}
+        \partial y_i / \partial x_k
+        =& \frac{\exp(x_i)[\sum_j \exp(x_j)] - \exp(x_i)\exp(x_i)}{[\sum_j \exp(x_j)]^2} \\\\
+        =& \frac{\exp(x_i) \left([\sum_j \exp(x_j)] -\exp(x_i)\right)}{[\sum_j \exp(x_j)]^2} \\\\
+        =& \frac{\exp(x_i)}{\sum_j \exp(x_j)} \cdot
+           \frac{[\sum_j \exp(x_j)] - \exp(x_i)}{\sum_j \exp(x_j)} \\\\
+        =& y_i \cdot (1 - y_i) \\\\
+        =& y_i - y_i y_k
+        \end{aligned}
+        $$
+
+        When $i \not= k$,
+
+        $$
+        \begin{aligned}
+        \partial y_i / \partial x_k
+        =& \frac{0 - \exp(x_i)\exp(x_k)}{[\sum_j \exp(x_j)]^2} \\\\
+        =& - y_i y_k
+        \end{aligned}
+        $$
+
+        As a result, the Jacobian matrix
+
+        $$
+        J_x y =
+        \begin{bmatrix}
+            y_1 - y_1 y_1 & - y_1 y_2 & ... &  - y_1 y_n \\\\
+            y_2 y_1 & y_2 - y_1 y_2 & ... &  - y_1 y_n \\\\
+            \vdots & \ddots \\\\
+            y_n y_1 & - y_n y_2 & ... & y_n - y_n y_n
+        \end{bmatrix}
+        = \operatorname{diag}(y) - y \times y^T
+        $$
+        '''
+        softmax = self.saved_forward
+        # diagonalize the last dimension
+        diag = softmax.diag_embed()
+        # generate softmax_{i,j} symmetric matrix
+        symm = softmax @ softmax.T
+        # compute Jacobian matrix wrt. inputs x
+        jacob_x = diag - symm # B x n x n
+        return jacob_x @ gradients
+
+
 if __name__ == '__main__':
     B = 12
     inputs = Tensor.randn(B, 3, 1)
@@ -245,4 +322,10 @@ if __name__ == '__main__':
     outputs = loss_layer.forward(inputs, feedbacks=Tensor.randn(B, 3))
     print(outputs)
     gradients = loss_layer.backward()
+    print(gradients.shape)
+
+    softmax_layer = SoftmaxLayer()
+    outputs = softmax_layer.forward(inputs)
+    print(outputs.shape)
+    gradients = softmax_layer.backward(Tensor.randn(B, 3, 1))
     print(gradients.shape)

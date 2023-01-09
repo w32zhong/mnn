@@ -46,7 +46,7 @@ $$ \nabla^T_w \ell = \nabla^T_y \ell \times J_w = \begin{bmatrix}  x_1 \frac{\pa
 
 As apparently it is a recycling patten, we can "unroll" the Jacobian to a matrix so that it matches the dimension of $W$: 
 
-$$ \nabla_W \ell = \begin{bmatrix}  x_1 \frac{\partial \ell}{\partial y_1} & x_2 \frac{\partial \ell}{\partial y_1} & ... & x_n \frac{\partial \ell}{\partial y_1} \\  x_1 \frac{\partial \ell}{\partial y_2} & x_2 \frac{\partial \ell}{\partial y_2} & ... & x_n \frac{\partial \ell}{\partial y_2} \\  \vdots \end{bmatrix} $$ 
+$$ \nabla_W \ell = \begin{bmatrix}  x_1 \frac{\partial \ell}{\partial y_1} & x_2 \frac{\partial \ell}{\partial y_1} & ... & x_n \frac{\partial \ell}{\partial y_1} \\\\  x_1 \frac{\partial \ell}{\partial y_2} & x_2 \frac{\partial \ell}{\partial y_2} & ... & x_n \frac{\partial \ell}{\partial y_2} \\\\  \vdots \end{bmatrix} $$ 
 
 thus it can be written in 
 

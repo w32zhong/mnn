@@ -94,6 +94,10 @@ class Tensor():
     def maximum(*args, **kwargs):
         return Tensor(cp.maximum(*args, **kwargs))
 
+    @staticmethod
+    def exp(*args, **kwargs):
+        return Tensor(cp.exp(*args, **kwargs))
+
     def diag_embed(self):
         last_dim = self.shape[-1]
         if last_dim == 1:
