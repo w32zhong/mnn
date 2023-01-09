@@ -35,11 +35,11 @@ class SequentialLayers():
      =&
      \begin{bmatrix} \frac{\partial f}{\partial x_1} & ... & \frac{\partial f}{\partial x_n} \end{bmatrix}_{x = x(t)}
      \cdot
-     \begin{bmatrix} \frac{\partial x_1}{\partial t_i} \\ \vdots \\ \frac{\partial x_n}{\partial t_i} \end{bmatrix} \\\\
+     \begin{bmatrix} \frac{\partial x_1}{\partial t_i} \\\\ \vdots \\\\ \frac{\partial x_n}{\partial t_i} \end{bmatrix} \\\\
      \doteq&
      \nabla_x^T f (x = x(t))
      \cdot
-     \begin{bmatrix} \frac{\partial x_1}{\partial t_i} \\ \vdots \\ \frac{\partial x_n}{\partial t_i} \end{bmatrix} \\\\
+     \begin{bmatrix} \frac{\partial x_1}{\partial t_i} \\\\ \vdots \\\\ \frac{\partial x_n}{\partial t_i} \end{bmatrix} \\\\
     \end{aligned}
     $$
 
