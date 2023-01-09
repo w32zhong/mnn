@@ -1,9 +1,19 @@
 from lazydocs import generate_docs
 import shutil
+import os
+import mnn.layer as layers
 
 
 docs = './docs'
-shutil.rmtree(docs)
-generate_docs([
-    "mnn.layer"
-    ], output_path=docs, watermark=False)
+if os.path.exists(docs):
+    shutil.rmtree(docs)
+
+modules = []
+for layer in dir(layers):
+    if layer.startswith('__'):
+        continue
+    elif layer in ['Tensor', 'BaseLayer']:
+        continue
+    modules.append(f'mnn.layer.{layer}')
+
+generate_docs(modules, output_path=docs, watermark=False)
