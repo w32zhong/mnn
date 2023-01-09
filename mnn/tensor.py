@@ -94,6 +94,10 @@ class Tensor():
         return Tensor(cp.ones_like(tensor._data))
 
     @staticmethod
+    def eye(*args, **kwargs):
+        return Tensor(cp.eye(*args, **kwargs))
+
+    @staticmethod
     def maximum(*args, **kwargs):
         return Tensor(cp.maximum(*args, **kwargs))
 
@@ -104,6 +108,16 @@ class Tensor():
     @staticmethod
     def log(*args, **kwargs):
         return Tensor(cp.log(*args, **kwargs))
+
+    def stacked(self, height=None):
+        width = self.shape[-1]
+        if height is None:
+            height = width
+        stacked = cp.broadcast_to(
+            self._data,
+            (self.shape[0], height, width)
+        )
+        return Tensor(stacked)
 
     def diag_embed(self):
         last_dim = self.shape[-1]

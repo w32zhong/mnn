@@ -326,6 +326,73 @@ class LogLayer(BaseLayer):
         return reciprocal * gradients
 
 
+class LogSoftmaxLayer(BaseLayer):
+    def __init__(self, *shape, axis=1):
+        super().__init__()
+        self.axis = axis
+
+    def forward(self, inputs, feedbacks=None):
+        r"""
+        $$
+        z(x) = \log y(x)
+        $$
+
+        where $y_i(x) = \frac{\exp(x_i)}{\sum_j \exp(x_j)}$
+        """
+        softmax = SoftmaxLayer.stable_softmax(inputs, self.axis)
+        self.saved_forward = softmax
+        return Tensor.log(softmax)
+
+    def backward(self, gradients):
+        r'''
+        For softmax function, when $i = k$, we have
+        $\partial y_i / \partial x_k = y_i \cdot (1 - y_i)$
+        and when $i \not= k$, we have
+        $\partial y_i / \partial x_k = - y_i y_k$
+
+        Therefore, for the log-softmax function, when $i = k$, we have
+
+        $$
+        \partial z_i / \partial x_k = y_i^{-1} \cdot y_i \cdot (1 - y_i)
+        = 1 - y_k
+        $$
+
+        and when $i \not= k$,
+
+        $$
+        \partial z_i / \partial x_k = y_i^{-1} \cdot (-y_i y_k) = - y_k
+        $$
+
+        As a result, the Jacobian matrix
+
+        $$
+        J_x z =
+        \begin{bmatrix}
+            1 - y_1 & - y_2 & ... &  - y_n \\\\
+            - y_1 & 1 - y_2 & ... &  - y_n \\\\
+            \vdots & \ddots \\\\
+            - y_1 & - y_2 & ... & 1 - y_n
+        \end{bmatrix}
+        $$
+
+        which can be seen as an identity matrix minus a "stacked" softmax vectors.
+
+        The gradient is, by definition,
+
+        $$
+        \nabla_x \ell = J^T_x z \cdot \nabla_z \ell
+        $$
+        '''
+        softmax = self.saved_forward
+        softmax_T = softmax.T
+        softmax_dim = softmax_T.shape[-1]
+        stacked = softmax_T.stacked()
+        # compute Jacobian matrix wrt. inputs x
+        identity = Tensor.eye(softmax_dim, softmax_dim).unsqueeze(0)
+        jacob_x = identity - stacked
+        return jacob_x.T @ gradients
+
+
 if __name__ == '__main__':
     B = 12
     inputs = Tensor.randn(B, 3, 1)
@@ -358,4 +425,10 @@ if __name__ == '__main__':
     outputs = log_layer.forward(inputs)
     print(outputs.shape)
     gradients = log_layer.backward(Tensor.randn(B, 3, 1))
+    print(gradients.shape)
+
+    log_softmax_layer = LogSoftmaxLayer()
+    outputs = log_softmax_layer.forward(inputs)
+    print(outputs.shape)
+    gradients = log_softmax_layer.backward(Tensor.randn(B, 3, 1))
     print(gradients.shape)
