@@ -302,6 +302,30 @@ class SoftmaxLayer(BaseLayer):
         return jacob_x @ gradients
 
 
+class LogLayer(BaseLayer):
+    def forward(self, inputs, feedbacks=None):
+        r"""
+        $$
+        y = \log(x)
+        $$
+        """
+        self.last_inputs = inputs
+        return Tensor.log(inputs)
+
+    def backward(self, gradients):
+        r"""
+        Because this layer is element-wise operation, i.e.,
+        $J_x y = \operatorname{diag}(x^{-1})$,
+        the final gradient can be also simplified into Hadamard product:
+
+        $$
+        \nabla_x \ell = J^T_x y \cdot \nabla_y \ell = x^{-1} \odot \nabla_y \ell
+        $$
+        """
+        reciprocal = 1 / self.last_inputs
+        return reciprocal * gradients
+
+
 if __name__ == '__main__':
     B = 12
     inputs = Tensor.randn(B, 3, 1)
@@ -328,4 +352,10 @@ if __name__ == '__main__':
     outputs = softmax_layer.forward(inputs)
     print(outputs.shape)
     gradients = softmax_layer.backward(Tensor.randn(B, 3, 1))
+    print(gradients.shape)
+
+    log_layer = LogLayer()
+    outputs = log_layer.forward(inputs)
+    print(outputs.shape)
+    gradients = log_layer.backward(Tensor.randn(B, 3, 1))
     print(gradients.shape)

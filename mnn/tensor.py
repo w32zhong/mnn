@@ -58,6 +58,9 @@ class Tensor():
     def __truediv__(self, x):
         return Tensor(self._data / x)
 
+    def __rtruediv__(self, x):
+        return Tensor(x / self._data)
+
     def __pow__(self, x):
         return Tensor(self._data ** x)
 
@@ -97,6 +100,10 @@ class Tensor():
     @staticmethod
     def exp(*args, **kwargs):
         return Tensor(cp.exp(*args, **kwargs))
+
+    @staticmethod
+    def log(*args, **kwargs):
+        return Tensor(cp.log(*args, **kwargs))
 
     def diag_embed(self):
         last_dim = self.shape[-1]
