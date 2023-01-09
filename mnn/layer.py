@@ -29,6 +29,19 @@ class BaseLayer():
 
 class LinearLayer(BaseLayer):
     def __init__(self, *shape, bias=True):
+        r'''
+        An linear layer to compute $y_{m \times 1} = W_{m \times n} x_{n \times 1} + b_{m \times 1}$,
+        where
+
+        $$
+        W = \begin{bmatrix}
+        w_{1,1} & w_{1, 2} & ... & w_{1, n} \\\\
+        w_{2,1} & w_{2, 2} & ... & w_{2, n} \\\\
+        \vdots \\\\
+        w_{m,1} & w_{m, 2} & ... & w_{m, n} \\\\
+        \end{bmatrix}
+        $$
+        '''
         super().__init__()
         n, m = shape
         self.params['w'] = Tensor.randn(1, m, n)

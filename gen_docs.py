@@ -16,4 +16,5 @@ for layer in dir(layers):
         continue
     modules.append(f'mnn.layer.{layer}')
 
-generate_docs(modules, output_path=docs, watermark=False)
+generate_docs(modules, output_path=docs,
+    watermark=False, remove_package_prefix=True)
