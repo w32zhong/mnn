@@ -16,5 +16,7 @@ for layer in dir(layers):
         continue
     modules.append(f'mnn.layer.{layer}')
 
+modules.append('mnn.seq_layers')
+
 generate_docs(modules, output_path=docs,
     watermark=False, remove_package_prefix=True)

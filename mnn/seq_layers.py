@@ -3,6 +3,25 @@ from .layer import *
 
 
 class SequentialLayers():
+    r'''
+    ## Background knowledge
+
+    Each layer $f$ in neural network is just a function mapping from
+    $f: \mathbb{R}^m \rightarrow \mathbb{R}^n $.
+
+    Without loss of generality, suppose $z(t) = f(x(t), y(t))$, we can show:
+
+    $$
+    \begin{aligned}
+    z'(t) &= \lim_{dt \to 0} \frac{f(x(t+dt), y(t+dt)) - f(x(t), y(t))}{dt} \\\\
+          &= \lim_{dt \to 0} \frac{  f(x(t+dt), y(t+dt)) - f(x(t+dt), y(t))  + f(x(t+dt), y(t)) - f(x(t), y(t))  }{dt} \\\\
+          &= \lim_{dt \to 0} \frac{f(x(t+dt), y(t+dt)) - f(x(t+dt), y(t))}{dt}  + \lim_{dt \to 0} \frac{f(x(t+dt), y(t)) - f(x(t), y(t))}{dt} \\\\
+          &= \lim_{dt \to 0} \frac{f(x(t+dt), y(t+dt)) - f(x(t+dt), y(t))}  {y(t+dt) - y(t)} \times  \frac{y(t+dt) - y(t)}{dt} \\\\  &+ \lim_{dt \to 0} \frac{f(x(t+dt), y(t)) - f(x(t), y(t))}  {x(x+dt) - x(t)} \times  \frac{x(x+dt) - x(t)}{dt} \\\\
+          &\doteq \lim_{dt \to 0} \frac{f(x(t+dt), y(t) + \Delta y) - f(x(t+dt), y(t))}  {\Delta y} \times  \frac{y(t+dt) - y(t)}{dt} \\\\  &+ \lim_{dt \to 0} \frac{f(x(t) + \Delta x, y(t)) - f(x(t), y(t))}  {\Delta x} \times  \frac{x(x+dt) - x(t)}{dt} \\\\
+          &= \frac{\partial z}{\partial y} \times \frac{\partial y}{\partial t}  + \frac{\partial z}{\partial x} \times \frac{\partial x}{\partial t} \end{aligned}
+    $$
+
+    '''
     def __init__(self, layers):
         self.layers = layers
 
@@ -15,6 +34,9 @@ class SequentialLayers():
         return v
 
     def backward(self, debug=False):
+        r'''
+        ## Gradients w.r.t. $W$
+        '''
         gradients = []
         for layer in reversed(self.layers):
             if len(gradients) == 0:
