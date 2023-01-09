@@ -32,7 +32,7 @@ __init__()
 backward(gradients)
 ```
 
-$$ \begin{aligned} \nabla_x \ell =& \nabla_f \ell \cdot \begin{bmatrix} f_1'(x_1) & 0 & ... & 0 \\\\ 0 & f_2'(x_2) & ... & 0 \\\\ \ddots \\\\ 0 & 0 & ... & f_n'(x_n) \end{bmatrix} \\\\ =& \nabla_f \ell \odot \nabla_x f \end{aligned} $$ 
+$$ \begin{aligned} \nabla_x \ell =& \nabla_f \ell \cdot \begin{bmatrix} f_1'(x_1) & 0 & ... & 0 \\\\ 0 & f_2'(x_2) & ... & 0 \\\\ \ddots \\\\ 0 & 0 & ... & f_n'(x_n) \end{bmatrix} \\\\ =& \nabla_f \ell \odot \begin{bmatrix} f_1'(x_1) & f_2'(x_2) & ... & f_n'(x_n) \end{bmatrix}^T \\\\ =& \nabla_f \ell \odot \nabla_x f \end{aligned} $$ 
 
 ---
 
