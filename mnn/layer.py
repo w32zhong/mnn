@@ -10,6 +10,13 @@ class BaseLayer():
     def _zero_grads(self):
         self.grads = {}
 
+    def _state_dict(self):
+        state_dict = {}
+        for key, param in self.params.items():
+            shape, param = param.shape, param.tolist()
+            state_dict[key] = (shape, param)
+        return state_dict
+
     def _accumulate_grads(self, key, val):
         reduced_val = self._batch_reduced(val)
         if key in self.grads:

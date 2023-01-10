@@ -8,11 +8,15 @@ from mnn.seq_layers import *
 import torch
 from datasets import MNIST
 
-def train(epochs=10, dryrun=False, debug=False):
+import pickle
+
+
+def train(epochs=10, dryrun=False, debug=False, batch_size=64,
+    save_file='data/mnist_model_ckpt.pkl'):
 
     dataset = MNIST('./data/MNIST/mnn_test.pickle')
-    loader = torch.utils.data.DataLoader(dataset,
-        batch_size=64, shuffle=True, collate_fn=lambda batch: batch)
+    loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
+        shuffle=True, collate_fn=lambda batch: batch)
 
     net = SequentialLayers([
         LinearLayer(28 * 28, 256),
@@ -28,8 +32,9 @@ def train(epochs=10, dryrun=False, debug=False):
             labels = Tensor([label for data, label in batch])
             labels = labels.unsqueeze(-1)
             loss = net(images, labels, debug=debug)
-            if b % 100 == 0:
-                print(f'Epoch#{ep} batch#{b} loss:', loss.item())
+
+            data_shape = images.shape
+            print(f'Epoch#{ep} batch#{b} {data_shape} loss:', loss.item())
 
             net.zero_grads()
             gradients = net.backward(debug=debug)
@@ -40,10 +45,20 @@ def train(epochs=10, dryrun=False, debug=False):
                 plt.show()
                 return
 
+    print('saving checkpoint ...')
+    with open(save_file, 'wb') as fh:
+        save = net.state_dict(), net.config()
+        pickle.dump(save, fh)
+
+
+def test(dryrun=False, debug=False):
+    pass
+
 
 if __name__ == '__main__':
     import fire, os
     os.environ["PAGER"] = 'cat'
     fire.Fire({
-        'train': train
+        'train': train,
+        'test': test
     })

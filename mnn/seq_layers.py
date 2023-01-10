@@ -1,3 +1,4 @@
+import json
 from mnn.tensor import Tensor
 from mnn.layer import *
 
@@ -109,6 +110,20 @@ class SequentialLayers():
     def zero_grads(self):
         for layer in self.layers:
             layer._zero_grads()
+
+    def state_dict(self):
+        state_dict = {}
+        for l, layer in enumerate(self.layers):
+            name, sub_state_dict = layer.name, layer._state_dict()
+            for key, val in sub_state_dict.items():
+                path = f'{l}.{name}.{key}'
+                state_dict[path] = val
+        return state_dict
+
+    def config(self):
+        return json.dumps({
+            'layers': len(self.layers)
+        })
 
 
 if __name__ == '__main__':
