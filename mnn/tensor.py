@@ -63,6 +63,12 @@ class Tensor():
         else:
             return Tensor(self._data * x)
 
+    def __eq__(self, x):
+        if isinstance(x, Tensor):
+            return Tensor(self._data == x._data)
+        else:
+            raise NotImplemented
+
     def __rmul__(self, x):
         if isinstance(x, Tensor):
             return Tensor(self._data * x._data)

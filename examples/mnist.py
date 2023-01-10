@@ -11,10 +11,10 @@ from datasets import MNIST
 import pickle
 
 
-def train(epochs=10, dryrun=False, debug=False, batch_size=64,
+def train(epochs=10, batch_size=64, dryrun=False, debug=False,
     save_file='data/mnist_model_ckpt.pkl'):
 
-    dataset = MNIST('./data/MNIST/mnn_test.pickle')
+    dataset = MNIST('./data/MNIST/mnn_train.pickle')
     loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
         shuffle=True, collate_fn=lambda batch: batch)
 
@@ -47,12 +47,41 @@ def train(epochs=10, dryrun=False, debug=False, batch_size=64,
 
     print('saving checkpoint ...')
     with open(save_file, 'wb') as fh:
-        save = net.state_dict(), net.config()
+        save = net.state_dict(), net.get_config()
         pickle.dump(save, fh)
 
 
-def test(dryrun=False, debug=False):
-    pass
+def test(checkpoint, batch_size=64):
+    with open(checkpoint, 'rb') as fh:
+        state_dict, config = pickle.load(fh)
+
+    dataset = MNIST('./data/MNIST/mnn_test.pickle')
+    loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
+        shuffle=True, collate_fn=lambda batch: batch)
+
+    net = SequentialLayers([
+        LinearLayer(28 * 28, 256),
+        ReluLayer(),
+        LinearLayer(256, 10),
+        SoftmaxLayer()
+    ])
+    net.load_weights(state_dict, config=config, verbose=True)
+
+    correct_cnt, inference_cnt = 0, 0
+    for b, batch in enumerate(loader):
+        images = Tensor([data for data, label in batch])
+        images = images.unsqueeze(-1)
+        labels = Tensor([label for data, label in batch])
+
+        scores = net(images).squeeze(-1)
+
+        preds = scores.argmax(-1)
+        corrects = (preds == labels)
+        correct_cnt += corrects.sum().item()
+        inference_cnt += labels.shape[0]
+
+    accuracy = correct_cnt / inference_cnt
+    print(f'test accuracy: {accuracy:.3f}')
 
 
 if __name__ == '__main__':

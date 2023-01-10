@@ -1,4 +1,3 @@
-import json
 from mnn.tensor import Tensor
 from mnn.layer import *
 
@@ -120,10 +119,19 @@ class SequentialLayers():
                 state_dict[path] = val
         return state_dict
 
-    def config(self):
-        return json.dumps({
-            'layers': len(self.layers)
-        })
+    def get_config(self):
+        return {'layers': len(self.layers)}
+
+    def load_weights(self, state_dict, config=None, verbose=False):
+        assert config is not None
+        assert len(self.layers) == config['layers']
+        for path, value in state_dict.items():
+            if verbose: print('loading weights to:', path)
+            path_fields = path.split('.')
+            l = int(path_fields.pop(0))
+            subpath = '.'.join(path_fields)
+            state_dict = {subpath: value}
+            self.layers[l]._load_weights(state_dict)
 
 
 if __name__ == '__main__':

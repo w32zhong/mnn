@@ -17,6 +17,14 @@ class BaseLayer():
             state_dict[key] = (shape, param)
         return state_dict
 
+    def _load_weights(self, state_dict, config=None):
+        for path, (shape, param) in state_dict.items():
+            name, key = path.split('.')
+            assert name == self.name
+            assert key in self.params
+            assert shape == self.params[key].shape
+            self.params[key] = Tensor(param)
+
     def _accumulate_grads(self, key, val):
         reduced_val = self._batch_reduced(val)
         if key in self.grads:
