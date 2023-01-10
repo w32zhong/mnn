@@ -427,6 +427,74 @@ class NllLossLayer(BaseLayer):
         return jacob_q.unsqueeze(-1)
 
 
+class CrossEntropyLayer(BaseLayer):
+    r'''
+    This is to simulate PyTorch soft entropy layer which
+    includes a softmax layer at the first layer.
+    Labels are passed in as integer indices.
+    '''
+    def __init__(self, *shape, axis=1):
+        super().__init__()
+        self.axis = axis
+
+    def forward(self, inputs, feedbacks=None):
+        r"""
+        $$
+        \ell = -\sum_i p_i \log y_i(x) = -\log y_l(x)
+        $$
+
+        where $y_i(x) = \frac{\exp(x_i)}{\sum_j \exp(x_j)}$
+        and $p_i$ are real probabilities.
+        In real implementation, label is specified as index $l$.
+        """
+        batch_size = inputs.shape[0]
+        indices = feedbacks.squeeze(-1)
+
+        softmax = SoftmaxLayer.stable_softmax(inputs, self.axis)
+        use_softmax = softmax[Tensor.arange(batch_size), indices]
+        cross_entropy = Tensor.log(use_softmax).squeeze(-1)
+
+        self.saved_context = (batch_size, indices, softmax)
+        return self._batch_reduced(cross_entropy)
+
+    def backward(self):
+        r'''
+        For the log-softmax function $z(x)$,
+        when $i = k$, we have
+        $\partial z_i / \partial x_k = 1 - y_k$.
+        And when $i \not= k$, we have
+        $\partial z_i / \partial x_k = - y_k$.
+
+        (recall that $y(x)$ is the softmax function)
+
+        Therefore, in the cross entropy case,
+
+        $$
+        \begin{aligned}
+         \partial \ell / \partial x_k
+        =& - \frac{\partial}{\partial x_k} \left[ \sum_i p_i z_i(x) \right] \\\\
+        =& - \left[ p_k \cdot (1 - y_k) - \sum_{j \not= k} p_j y_k \right] \\\\
+        =& - p_k + p_k y_k + \sum_{j \not= k} p_j y_k \\\\
+        =& - p_k + \sum_j p_j y_k \\\\
+        =& - p_k + y_k \\\\
+        \end{aligned}
+        $$
+
+        Assume the specified label is $l$, we will have the gradient vector
+        (also assuming $p_l = 1$)
+
+        $$
+        \nabla_x \ell = \begin{bmatrix}
+            y_1 & y_2 & ... & y_{k-1} & y_k - 1 & y_{k+1} & ... & y_n
+        \end{bmatrix}^T
+        $$
+        '''
+        batch_size, indices, softmax = self.saved_context
+        gradients = softmax
+        gradients[Tensor.arange(batch_size), indices] -= 1.0
+        return gradients
+
+
 if __name__ == '__main__':
     B = 12
     D = 3
@@ -473,4 +541,11 @@ if __name__ == '__main__':
         feedbacks=Tensor.randint(shape=(B, 1), high=D))
     print(outputs.shape)
     gradients = nll_loss_layer.backward()
+    print(gradients.shape)
+
+    cross_entropy_layer = CrossEntropyLayer()
+    outputs = cross_entropy_layer.forward(inputs,
+        feedbacks=Tensor.randint(shape=(B, 1), high=D))
+    print(outputs)
+    gradients = cross_entropy_layer.backward()
     print(gradients.shape)

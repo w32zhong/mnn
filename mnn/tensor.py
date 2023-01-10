@@ -45,19 +45,34 @@ class Tensor():
         return Tensor(- self._data)
 
     def __add__(self, x):
-        return Tensor(self._data + x._data)
+        if isinstance(x, Tensor):
+            return Tensor(self._data + x._data)
+        else:
+            return Tensor(self._data + x)
 
     def __sub__(self, x):
-        return Tensor(self._data - x._data)
+        if isinstance(x, Tensor):
+            return Tensor(self._data - x._data)
+        else:
+            return Tensor(self._data - x)
 
     def __mul__(self, x):
-        return Tensor(self._data * x._data)
+        if isinstance(x, Tensor):
+            return Tensor(self._data * x._data)
+        else:
+            return Tensor(self._data * x)
 
     def __rmul__(self, x):
-        return Tensor(self._data * x)
+        if isinstance(x, Tensor):
+            return Tensor(self._data * x._data)
+        else:
+            return Tensor(self._data * x)
 
     def __matmul__(self, x):
-        return Tensor(self._data @ x._data)
+        if isinstance(x, Tensor):
+            return Tensor(self._data @ x._data)
+        else:
+            return Tensor(self._data @ x)
 
     def __truediv__(self, x):
         return Tensor(self._data / x)
@@ -69,16 +84,28 @@ class Tensor():
         return Tensor(self._data ** x)
 
     def __lt__(self, x):
-        return Tensor(self._data < x)
+        if isinstance(x, Tensor):
+            return Tensor(self._data < x._data)
+        else:
+            return Tensor(self._data < x)
 
     def __le__(self, x):
-        return Tensor(self._data <= x)
+        if isinstance(x, Tensor):
+            return Tensor(self._data <= x._data)
+        else:
+            return Tensor(self._data <= x)
 
     def __gt__(self, x):
-        return Tensor(self._data > x)
+        if isinstance(x, Tensor):
+            return Tensor(self._data > x._data)
+        else:
+            return Tensor(self._data > x)
 
     def __ge__(self, x):
-        return Tensor(self._data >= x)
+        if isinstance(x, Tensor):
+            return Tensor(self._data >= x._data)
+        else:
+            return Tensor(self._data >= x)
 
     @staticmethod
     def zeros(shape):
