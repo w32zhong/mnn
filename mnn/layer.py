@@ -17,7 +17,7 @@ class BaseLayer():
         else:
             self.grads[key] = reduced_val
 
-    def step(self, lr=0.001):
+    def step(self, lr=0.01):
         for key, grads in self.grads.items():
             assert grads.shape[1:] == self.params[key].shape[1:]
             self.params[key] -= lr * grads

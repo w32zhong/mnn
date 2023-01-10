@@ -106,6 +106,10 @@ class SequentialLayers():
         for layer in self.layers:
             layer.step()
 
+    def zero_grads(self):
+        for layer in self.layers:
+            layer._zero_grads()
+
 
 if __name__ == '__main__':
     import sys
@@ -167,6 +171,7 @@ if __name__ == '__main__':
     for ep in range(1 if debug else 20):
         loss = net(inputs, targets, debug=debug)
         print(f'epoch#{ep + 1}', loss)
+        net.zero_grads()
         gradients = net.backward(debug=debug)
         if debug:
             for layer, grads in zip(net.layers, gradients):

@@ -28,7 +28,12 @@ def train(epochs=10, dryrun=False, debug=False):
             labels = Tensor([label for data, label in batch])
             labels = labels.unsqueeze(-1)
             loss = net(images, labels, debug=debug)
-            print(f'Epoch#{ep} batch#{b} loss:', loss.item())
+            if b % 100 == 0:
+                print(f'Epoch#{ep} batch#{b} loss:', loss.item())
+
+            net.zero_grads()
+            gradients = net.backward(debug=debug)
+            net.step()
 
             if dryrun:
                 plt.imshow(images[0].reshape(28, 28).get())
