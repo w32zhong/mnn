@@ -21,7 +21,7 @@ class Tensor():
             if isinstance(result, cp.core.core.ndarray):
                 return Tensor(result)
             else:
-                return res
+                return result
             return result
         if callable(attr):
             return wrapped_method

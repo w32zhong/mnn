@@ -69,7 +69,7 @@ class SequentialLayers():
         for layer in self.layers:
             if debug: print('forward', layer.name, v.shape, end=' => ')
             v = layer.forward(v, feedbacks=targets)
-            if debug: print(v.shape)
+            if debug: print(v.shape, 'sum:', v.sum())
         return v
 
     def backward(self, debug=False):
