@@ -1,11 +1,11 @@
 <!-- markdownlint-disable -->
 
-<a href="../mnn/layer.py#L430"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L455"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 # <kbd>class</kbd> `CrossEntropyLossLayer`
 This is to simulate PyTorch soft entropy layer which includes a softmax layer at the first layer. Labels are passed in as integer indices. 
 
-<a href="../mnn/layer.py#L436"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L461"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -22,7 +22,7 @@ __init__(*shape, axis=1)
 
 ---
 
-<a href="../mnn/layer.py#L460"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L487"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>method</kbd> `backward`
 
@@ -44,7 +44,7 @@ $$ \nabla_x \ell = \begin{bmatrix}  y_1 & y_2 & ... & y_{k-1} & y_k - 1 & y_{k+1
 
 ---
 
-<a href="../mnn/layer.py#L440"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L465"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>method</kbd> `forward`
 

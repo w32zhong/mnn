@@ -331,6 +331,29 @@ class LogSoftmaxLayer(BaseLayer):
         super().__init__()
         self.axis = axis
 
+    @staticmethod
+    def stable_log_softmax(inputs, axis):
+        r"""
+        Simplify:
+
+        $$
+        \begin{aligned}
+        z_i(x) =& \log \frac{\exp(x_i - m)}{\sum_j \exp(x_j - m)} \\\\
+               =& x_i - m - \log(\sum_j \exp(x_j - m)) \\\\
+        \end{aligned}
+        $$
+        """
+        inputs_max = inputs.max(axis=axis, keepdims=True)
+        inputs_off = inputs - inputs_max
+
+        stable_exps = Tensor.exp(inputs_off)
+        sum_exps = stable_exps.sum(axis=axis, keepdims=True)
+
+        softmax = stable_exps / sum_exps
+        log_softmax = inputs_off - Tensor.log(sum_exps)
+
+        return log_softmax, softmax
+
     def forward(self, inputs, feedbacks=None):
         r"""
         $$
@@ -339,9 +362,11 @@ class LogSoftmaxLayer(BaseLayer):
 
         where $y_i(x) = \frac{\exp(x_i)}{\sum_j \exp(x_j)}$
         """
-        softmax = SoftmaxLayer.stable_softmax(inputs, self.axis)
+        log_softmax, softmax = LogSoftmaxLayer.stable_log_softmax(
+            inputs, self.axis
+        )
         self.saved_forward = softmax
-        return Tensor.log(softmax)
+        return log_softmax
 
     def backward(self, gradients):
         r'''
@@ -450,9 +475,11 @@ class CrossEntropyLossLayer(BaseLayer):
         batch_size = inputs.shape[0]
         indices = feedbacks.squeeze(-1)
 
-        softmax = SoftmaxLayer.stable_softmax(inputs, self.axis)
-        use_softmax = softmax[Tensor.arange(batch_size), indices]
-        cross_entropy = -Tensor.log(use_softmax).squeeze(-1)
+        log_softmax, softmax = LogSoftmaxLayer.stable_log_softmax(
+            inputs, self.axis
+        )
+        use_log_softmax = log_softmax[Tensor.arange(batch_size), indices]
+        cross_entropy = - use_log_softmax.squeeze(-1)
 
         self.saved_context = (batch_size, indices, softmax)
         return self._batch_reduced(cross_entropy)

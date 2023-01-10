@@ -24,7 +24,7 @@ __init__(*shape, axis=1)
 
 ---
 
-<a href="../mnn/layer.py#L346"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L371"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>method</kbd> `backward`
 
@@ -56,7 +56,7 @@ $$ \nabla_x \ell = J^T_x z \cdot \nabla_z \ell $$
 
 ---
 
-<a href="../mnn/layer.py#L334"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L357"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>method</kbd> `forward`
 
@@ -67,6 +67,20 @@ forward(inputs, feedbacks=None)
 $$ z(x) = \log y(x) $$ 
 
 where $y_i(x) = \frac{\exp(x_i)}{\sum_j \exp(x_j)}$ 
+
+---
+
+<a href="../mnn/layer.py#L334"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+## <kbd>method</kbd> `stable_log_softmax`
+
+```python
+stable_log_softmax(inputs, axis)
+```
+
+Simplify: 
+
+$$ \begin{aligned} z_i(x) =& \log \frac{\exp(x_i - m)}{\sum_j \exp(x_j - m)} \\\\  =& x_i - m - \log(\sum_j \exp(x_j - m)) \\\\ \end{aligned} $$ 
 
 ---
 
