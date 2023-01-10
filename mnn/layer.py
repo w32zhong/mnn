@@ -427,7 +427,7 @@ class NllLossLayer(BaseLayer):
         return jacob_q.unsqueeze(-1)
 
 
-class CrossEntropyLayer(BaseLayer):
+class CrossEntropyLossLayer(BaseLayer):
     r'''
     This is to simulate PyTorch soft entropy layer which
     includes a softmax layer at the first layer.
@@ -452,7 +452,7 @@ class CrossEntropyLayer(BaseLayer):
 
         softmax = SoftmaxLayer.stable_softmax(inputs, self.axis)
         use_softmax = softmax[Tensor.arange(batch_size), indices]
-        cross_entropy = Tensor.log(use_softmax).squeeze(-1)
+        cross_entropy = -Tensor.log(use_softmax).squeeze(-1)
 
         self.saved_context = (batch_size, indices, softmax)
         return self._batch_reduced(cross_entropy)
@@ -543,7 +543,7 @@ if __name__ == '__main__':
     gradients = nll_loss_layer.backward()
     print(gradients.shape)
 
-    cross_entropy_layer = CrossEntropyLayer()
+    cross_entropy_layer = CrossEntropyLossLayer()
     outputs = cross_entropy_layer.forward(inputs,
         feedbacks=Tensor.randint(shape=(B, 1), high=D))
     print(outputs)

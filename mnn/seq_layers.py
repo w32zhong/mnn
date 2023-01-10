@@ -108,21 +108,67 @@ class SequentialLayers():
 
 
 if __name__ == '__main__':
-    B = 4
-    inputs = Tensor.randn(B, 32, 1)
-    targets = Tensor.randn(B, 10)
-
-    net = SequentialLayers([
-        LinearLayer(32, 40),
-        ReluLayer(),
-        LinearLayer(40, 10, bias=False),
-        ReluLayer(),
-        MSELossLayer()
-    ])
-
+    import sys
+    B = 4 # batch size
+    C = 5 # classes
     debug = False
-    for ep in range(1 if debug else 10):
+    testcase = sys.argv[1] if len(sys.argv) > 1 else 1
+
+    def testcase1():
+        inputs = Tensor.randn(B, 32, 1)
+        targets = Tensor.randn(B, 10)
+        net = SequentialLayers([
+            LinearLayer(32, 40),
+            ReluLayer(),
+            LinearLayer(40, 10, bias=False),
+            ReluLayer(),
+            MSELossLayer()
+        ])
+        return inputs, targets, net
+
+    def testcase2():
+        inputs = Tensor.randn(B, 32, 1)
+        targets = Tensor.randint(shape=(B, 1), high=C)
+        net = SequentialLayers([
+            LinearLayer(32, 40),
+            ReluLayer(),
+            LinearLayer(40, C, bias=False),
+            CrossEntropyLossLayer()
+        ])
+        return inputs, targets, net
+
+    def testcase3():
+        inputs = Tensor.randn(B, 32, 1)
+        targets = Tensor.randint(shape=(B, 1), high=C)
+        net = SequentialLayers([
+            LinearLayer(32, 40),
+            ReluLayer(),
+            LinearLayer(40, C, bias=False),
+            LogSoftmaxLayer(),
+            NllLossLayer()
+        ])
+        return inputs, targets, net
+
+    def testcase4():
+        inputs = Tensor.randn(B, 32, 1)
+        targets = Tensor.randint(shape=(B, 1), high=C)
+        net = SequentialLayers([
+            LinearLayer(32, 40),
+            ReluLayer(),
+            LinearLayer(40, C, bias=False),
+            SoftmaxLayer(),
+            LogLayer(),
+            NllLossLayer()
+        ])
+        return inputs, targets, net
+
+    inputs, targets, net = globals()['testcase'+ str(testcase)]()
+
+    for ep in range(1 if debug else 20):
         loss = net(inputs, targets, debug=debug)
         print(f'epoch#{ep + 1}', loss)
-        net.backward(debug=debug)
+        gradients = net.backward(debug=debug)
+        if debug:
+            for layer, grads in zip(net.layers, gradients):
+                print(layer.name, 'gradients sum:', grads.sum())
         net.step()

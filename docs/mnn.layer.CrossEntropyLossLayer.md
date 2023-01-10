@@ -2,7 +2,7 @@
 
 <a href="../mnn/layer.py#L430"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
-# <kbd>class</kbd> `CrossEntropyLayer`
+# <kbd>class</kbd> `CrossEntropyLossLayer`
 This is to simulate PyTorch soft entropy layer which includes a softmax layer at the first layer. Labels are passed in as integer indices. 
 
 <a href="../mnn/layer.py#L436"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>

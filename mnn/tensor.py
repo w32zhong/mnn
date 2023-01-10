@@ -38,6 +38,7 @@ class Tensor():
             self._data.__setitem__(key._data, val)
         elif isinstance(key, tuple):
             key = tuple(map(lambda x: x._data, key))
+            self._data.__setitem__(key, val)
         else:
             self._data.__setitem__(key, val)
 
