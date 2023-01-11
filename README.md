@@ -25,8 +25,8 @@ python examples/mnist.py test ./data/mnist_model_ckpt.pkl
 ## Learning steps
 Here is a recommended ordered reading list of MNN source code that you can pick up knowledge smoothly by going through the comments with linked code location:
 
-1. [examples/mnist](examples/mnist.py)
-1. [seq_layers](docs/mnn.seq_layers.md)
+1. [examples/mnist](examples/mnist.py) (only illustrating the pipeline code)
+1. [SequentialLayers](docs/mnn.seq_layers.md)
 1. [LinearLayer](docs/mnn.layer.LinearLayer.md)
 1. [ReluLayer](docs/mnn.layer.ReluLayer.md)
 1. [MSELossLayer](docs/mnn.layer.MSELossLayer.md)
