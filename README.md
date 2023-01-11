@@ -35,5 +35,9 @@ Here is a recommended ordered reading list of MNN source code that you can pick 
 1. [NllLossLayer](docs/mnn.layer.NllLossLayer.md)
 1. [CrossEntropyLossLayer](docs/mnn.layer.CrossEntropyLossLayer.md)
 
+## Credits
+This project is inspired by [pytorch](https://github.com/pytorch/pytorch) and [tinynn](https://github.com/borgwang/tinynn).
+Further inspiration may also taken from other projects (will be listed).
+
 ## License
 MIT
