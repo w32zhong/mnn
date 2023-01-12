@@ -548,8 +548,10 @@ class MatrixProduct(BaseLayer):
 
         where $p_i \in \mathbb{R}^{n \times 1}$ and $q_j \in \mathbb{R}^{d \times 1}$.
         """
-        self.last_inputs = inputs
-        pass
+        Q, P = inputs
+        self.matrix_product_ctx = inputs
+        D = Q @ P
+        return D
 
     def backward(self, gradients):
         r'''
@@ -626,7 +628,7 @@ class MatrixProduct(BaseLayer):
             \times
             \left( \frac{\partial \bar{D} }{ \partial \bar{Q} } \right)_{nm \times nd}
             \stackrel{\text{unroll}}{\Rightarrow}\quad
-        \nabla_{Q} \ell = \left( D \cdot P^T \right)_{n \times d}
+        \nabla_{Q} \ell = \left(  \nabla_{D}\ell \cdot P^T \right)_{n \times d}
         $$
 
         $$
@@ -636,17 +638,21 @@ class MatrixProduct(BaseLayer):
             \times
             \left( \frac{\partial \widetilde{D} }{ \partial \widetilde{P} } \right)_{nm \times md}
             \stackrel{\text{unroll}}{\Rightarrow}\quad
-        \nabla_{P^T} \ell = \left( D^T \cdot Q \right)_{m \times d}
+        \nabla_{P^T} \ell = \left( (\nabla_{D}\ell)^T \cdot Q \right)_{m \times d}
         $$
 
         since Eq. (5) has \widetilde{P} rolled as a transposed form, its gradients is w.r.t. $P^T$, hence the final form of Eq. (5) is
 
         $$
         \tag{6}
-        \nabla_{P} \ell = \left( Q^T \cdot D \right)_{d \times m}
+        \nabla_{P} \ell = \left( Q^T \cdot \nabla_{D}\ell \right)_{d \times m}
         $$
         '''
-        pass
+
+        Q, P = self.matrix_product_ctx
+        grads_Q = gradients @ P.T
+        grads_P = Q.T @ gradients
+        return grads_Q, grads_P
 
 
 if __name__ == '__main__':

@@ -24,7 +24,7 @@ __init__()
 
 ---
 
-<a href="../mnn/layer.py#L554"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L556"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>method</kbd> `backward`
 
@@ -46,13 +46,13 @@ $$ \nabla_x^T \ell =  \nabla_y^T \ell \times J_x y $$
 
 therefore, 
 
-$$ \tag{4} \nabla_{\bar{Q}}^T \ell =  \left( \nabla_{\bar{D}}^T \ell \right)_{1 \times nm}  \times  \left( \frac{\partial \bar{D} }{ \partial \bar{Q} } \right)_{nm \times nd}  \stackrel{\text{unroll}}{\Rightarrow}\quad \nabla_{Q} \ell = \left( D \cdot P^T \right)_{n \times d} $$ 
+$$ \tag{4} \nabla_{\bar{Q}}^T \ell =  \left( \nabla_{\bar{D}}^T \ell \right)_{1 \times nm}  \times  \left( \frac{\partial \bar{D} }{ \partial \bar{Q} } \right)_{nm \times nd}  \stackrel{\text{unroll}}{\Rightarrow}\quad \nabla_{Q} \ell = \left(  \nabla_{D}\ell \cdot P^T \right)_{n \times d} $$ 
 
-$$ \tag{5} \nabla_{\widetilde{P}}^T \ell =  \left( \nabla_{\widetilde{D}}^T \ell \right)_{1 \times nm}  \times  \left( \frac{\partial \widetilde{D} }{ \partial \widetilde{P} } \right)_{nm \times md}  \stackrel{\text{unroll}}{\Rightarrow}\quad \nabla_{P^T} \ell = \left( D^T \cdot Q \right)_{m \times d} $$ 
+$$ \tag{5} \nabla_{\widetilde{P}}^T \ell =  \left( \nabla_{\widetilde{D}}^T \ell \right)_{1 \times nm}  \times  \left( \frac{\partial \widetilde{D} }{ \partial \widetilde{P} } \right)_{nm \times md}  \stackrel{\text{unroll}}{\Rightarrow}\quad \nabla_{P^T} \ell = \left( (\nabla_{D}\ell)^T \cdot Q \right)_{m \times d} $$ 
 
 since Eq. (5) has \widetilde{P} rolled as a transposed form, its gradients is w.r.t. $P^T$, hence the final form of Eq. (5) is 
 
-$$ \tag{6} \nabla_{P} \ell = \left( Q^T \cdot D \right)_{d \times m} $$ 
+$$ \tag{6} \nabla_{P} \ell = \left( Q^T \cdot \nabla_{D}\ell \right)_{d \times m} $$ 
 
 ---
 
