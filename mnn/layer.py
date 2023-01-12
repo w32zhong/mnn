@@ -570,7 +570,7 @@ class MatrixProduct(BaseLayer):
         =&
         \begin{bmatrix}
         \ddots & & \\\\
-        & \left( \frac{\partial D_{j,*}}{\partial Q_{j,*}} \right)_{m \times d}, \quad j = 1, ..., n & \\\\
+        & \left( \frac{\partial D_{j,\star}}{\partial Q_{j,\star}} \right)_{m \times d}, \quad j = 1, ..., n & \\\\
         & & \ddots
         \end{bmatrix} \\\\
         =&
@@ -599,7 +599,7 @@ class MatrixProduct(BaseLayer):
         =&
         \begin{bmatrix}
         \ddots & & \\\\
-        & \left( \frac{\partial D_{*,j}}{\partial P_{*,j}} \right)_{n \times d}, \quad j = 1, ..., m & \\\\
+        & \left( \frac{\partial D_{\star,j}}{\partial P_{\star,j}} \right)_{n \times d}, \quad j = 1, ..., m & \\\\
         & & \ddots
         \end{bmatrix} \\\\
         =&
