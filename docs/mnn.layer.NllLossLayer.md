@@ -1,6 +1,6 @@
 <!-- markdownlint-disable -->
 
-<a href="../mnn/layer.py#L421"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L436"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 # <kbd>class</kbd> `NllLossLayer`
 This is to simulate PyTorch NLL layer which computes a negative expectation loss. Labels are passed in as integer indices. 
@@ -22,7 +22,7 @@ __init__()
 
 ---
 
-<a href="../mnn/layer.py#L444"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L459"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>method</kbd> `backward`
 
@@ -34,7 +34,7 @@ In this case, the gradient vector w.r.t. $q$ is simply an almost-zero vector $v$
 
 ---
 
-<a href="../mnn/layer.py#L426"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L441"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>method</kbd> `forward`
 
@@ -48,12 +48,12 @@ where $p \in \{0, 1\}$ indicates true probability, but in actual implementation,
 
 ---
 
-<a href="../mnn/layer.py#L20"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L35"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>method</kbd> `step`
 
 ```python
-step(lr=0.001)
+step(lr=0.01)
 ```
 
 

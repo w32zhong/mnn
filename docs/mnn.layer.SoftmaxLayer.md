@@ -1,13 +1,13 @@
 <!-- markdownlint-disable -->
 
-<a href="../mnn/layer.py#L228"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L243"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 # <kbd>class</kbd> `SoftmaxLayer`
 
 
 
 
-<a href="../mnn/layer.py#L229"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L244"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -24,7 +24,7 @@ __init__(*shape, axis=1)
 
 ---
 
-<a href="../mnn/layer.py#L256"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L271"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>method</kbd> `backward`
 
@@ -46,7 +46,7 @@ $$ J_x y = \begin{bmatrix}  y_1 - y_1 y_1 & - y_1 y_2 & ... &  - y_1 y_n \\\\  y
 
 ---
 
-<a href="../mnn/layer.py#L252"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L267"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>method</kbd> `forward`
 
@@ -60,7 +60,7 @@ forward(inputs, feedbacks=None)
 
 ---
 
-<a href="../mnn/layer.py#L233"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L248"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>method</kbd> `stable_softmax`
 
@@ -78,12 +78,12 @@ where $m = \max(x_1, x_2, ...)$.
 
 ---
 
-<a href="../mnn/layer.py#L20"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L35"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>method</kbd> `step`
 
 ```python
-step(lr=0.001)
+step(lr=0.01)
 ```
 
 

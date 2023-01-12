@@ -1,6 +1,6 @@
 <!-- markdownlint-disable -->
 
-<a href="../mnn/layer.py#L305"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L320"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 # <kbd>class</kbd> `LogLayer`
 
@@ -24,7 +24,7 @@ __init__()
 
 ---
 
-<a href="../mnn/layer.py#L315"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L330"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>method</kbd> `backward`
 
@@ -38,7 +38,7 @@ $$ \nabla_x \ell = J^T_x y \cdot \nabla_y \ell = x^{-1} \odot \nabla_y \ell $$
 
 ---
 
-<a href="../mnn/layer.py#L306"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L321"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>method</kbd> `forward`
 
@@ -50,12 +50,12 @@ $$ y = \log(x) $$
 
 ---
 
-<a href="../mnn/layer.py#L20"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L35"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>method</kbd> `step`
 
 ```python
-step(lr=0.001)
+step(lr=0.01)
 ```
 
 

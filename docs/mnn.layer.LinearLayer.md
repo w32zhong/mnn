@@ -1,13 +1,13 @@
 <!-- markdownlint-disable -->
 
-<a href="../mnn/layer.py#L30"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L45"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 # <kbd>class</kbd> `LinearLayer`
 
 
 
 
-<a href="../mnn/layer.py#L31"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L46"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -24,7 +24,7 @@ __init__(*shape, bias=True)
 
 ---
 
-<a href="../mnn/layer.py#L59"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L74"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>method</kbd> `backward`
 
@@ -72,7 +72,7 @@ $$ \tag{3} \nabla_x \ell = J_x^T \times \nabla_y \ell  =  W^T \times \nabla_y \e
 
 ---
 
-<a href="../mnn/layer.py#L39"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L54"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>method</kbd> `forward`
 
@@ -86,12 +86,12 @@ $$ W = \begin{bmatrix} w_{1,1} & w_{1, 2} & ... & w_{1, n} \\\\ w_{2,1} & w_{2, 
 
 ---
 
-<a href="../mnn/layer.py#L20"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L35"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>method</kbd> `step`
 
 ```python
-step(lr=0.001)
+step(lr=0.01)
 ```
 
 

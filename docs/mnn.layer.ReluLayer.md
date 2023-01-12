@@ -1,6 +1,6 @@
 <!-- markdownlint-disable -->
 
-<a href="../mnn/layer.py#L168"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L183"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 # <kbd>class</kbd> `ReluLayer`
 
@@ -24,7 +24,7 @@ __init__()
 
 ---
 
-<a href="../mnn/layer.py#L185"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L200"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>method</kbd> `backward`
 
@@ -36,7 +36,7 @@ $$ \begin{aligned} \nabla_x \ell =& \nabla_f \ell \cdot \begin{bmatrix} f_1'(x_1
 
 ---
 
-<a href="../mnn/layer.py#L169"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L184"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>method</kbd> `forward`
 
@@ -50,12 +50,12 @@ $$ f_i(x) = \left \\{ \begin{aligned} x && (x \ge 0) \\\\ 0 && (\text{otherwise}
 
 ---
 
-<a href="../mnn/layer.py#L20"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="../mnn/layer.py#L35"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>method</kbd> `step`
 
 ```python
-step(lr=0.001)
+step(lr=0.01)
 ```
 
 

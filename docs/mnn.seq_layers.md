@@ -67,6 +67,48 @@ $$  \nabla_t^T z(t) = \nabla_x^T f (x = x(t)) \cdot J_t x $$
 
 ---
 
+<a href="../mnn/seq_layers.py#L122"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `get_config`
+
+```python
+get_config()
+```
+
+
+
+
+
+---
+
+<a href="../mnn/seq_layers.py#L125"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `load_weights`
+
+```python
+load_weights(state_dict, config=None, verbose=False)
+```
+
+
+
+
+
+---
+
+<a href="../mnn/seq_layers.py#L113"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `state_dict`
+
+```python
+state_dict()
+```
+
+
+
+
+
+---
+
 <a href="../mnn/seq_layers.py#L96"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `step`
@@ -80,5 +122,19 @@ step()
 At time $k$, to update the parameter $t$ to achieve lower $z$ value (loss): 
 
 $$ t^{(k + 1)} = t^{(k)} - \eta \cdot \nabla_t z $$ 
+
+---
+
+<a href="../mnn/seq_layers.py#L109"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+
+### <kbd>method</kbd> `zero_grads`
+
+```python
+zero_grads()
+```
+
+
+
+
 
 
