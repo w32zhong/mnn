@@ -1,3 +1,4 @@
+import math
 from mnn.tensor import Tensor
 
 
@@ -241,7 +242,7 @@ class MSELossLayer(BaseLayer):
 
 
 class SoftmaxLayer(BaseLayer):
-    def __init__(self, *shape, axis=1):
+    def __init__(self, axis=1):
         super().__init__()
         self.axis = axis
 
@@ -655,6 +656,47 @@ class MatrixProduct(BaseLayer):
         return grads_Q, grads_P
 
 
+class MultiHeadAttention(BaseLayer):
+    def __init__(self, d=64, heads=12, bias=False):
+        super().__init__()
+        self.d = d
+        self.heads = heads
+        d_full = d * heads
+        self.W_qry = LinearLayer(d_full, d_full, bias=bias)
+        self.W_key = LinearLayer(d_full, d_full, bias=bias)
+        self.W_val = LinearLayer(d_full, d_full, bias=bias)
+        self.scaled_dotproduct = MatrixProduct()
+        self.softmax = SoftmaxLayer(axis=-1)
+        self.apply_attention = MatrixProduct()
+
+    def split_heads(self, X):
+        X = X.squeeze(-1)
+        new_shape = X.shape[:-1] + (self.heads, self.d)
+        X = X.reshape(new_shape)
+        X = X.transpose(0, 2, 1, 3)
+        return X.unsqueeze(-1)
+
+    def merge_heads(self, X):
+        X = X.squeeze(-1)
+        X = X.transpose(0, 2, 1, 3)
+        new_shape = X.shape[:-2] + (self.d * self.heads,)
+        X = X.reshape(new_shape)
+        return X.unsqueeze(-1)
+
+    def forward(self, inputs, feedbacks=None):
+        X = inputs
+
+        Q = self.split_heads(self.W_qry.forward(X))
+        K = self.split_heads(self.W_key.forward(X))
+        V = self.split_heads(self.W_val.forward(X))
+
+        K = K / math.sqrt(self.d)
+        product = self.scaled_dotproduct.forward((Q, K.T))
+        A = self.softmax.forward(product)
+        V_attn = self.apply_attention.forward((A, V))
+        return self.merge_heads(V_attn)
+
+
 if __name__ == '__main__':
     B = 12
     D = 3
@@ -709,3 +751,8 @@ if __name__ == '__main__':
     print(outputs)
     gradients = cross_entropy_layer.backward()
     print(gradients.shape)
+
+    multihead_attn = MultiHeadAttention(d=32, heads=3)
+    inputs = Tensor.randn(2, 128, 32 * 3, 1)
+    outputs = multihead_attn.forward(inputs)
+    print(multihead_attn.name, outputs.shape)
