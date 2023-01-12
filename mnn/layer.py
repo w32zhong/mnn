@@ -2,6 +2,19 @@ import math
 from mnn.tensor import Tensor
 
 
+def ensure_vector_shape(func):
+    def wrapper(self, inputs, *args, **kwargs):
+        reshaped = False
+        if inputs.shape[-1] != 1:
+            inputs = inputs.unsqueeze(-1)
+            reshaped = True
+        outputs = func(self, inputs, *args, **kwargs)
+        if reshaped:
+            outputs = outputs.squeeze(-1)
+        return outputs
+    return wrapper
+
+
 class BaseLayer():
     def __init__(self):
         self.name = self.__class__.__name__
@@ -52,6 +65,7 @@ class LinearLayer(BaseLayer):
         if self.bias:
             self.params['b'] = Tensor.randn(1, m, 1)
 
+    @ensure_vector_shape
     def forward(self, inputs, feedbacks=None):
         r'''
         An linear layer to compute $y_{m \times 1} = W_{m \times n} x_{n \times 1} + b_{m \times 1}$,
@@ -72,6 +86,7 @@ class LinearLayer(BaseLayer):
         else:
             return self.params['w'] @ inputs
 
+    @ensure_vector_shape
     def backward(self, gradients):
         r'''
         ## Gradients w.r.t. $W$
@@ -227,7 +242,8 @@ class MSELossLayer(BaseLayer):
         r'''
         Loss $\ell_i = \sum_{i} (x_i - y_i)^2$
         '''
-        inputs = inputs.squeeze(-1)
+        if inputs.shape[-1] == 1:
+            inputs = inputs.squeeze(-1)
         self.last_error = inputs - feedbacks
         batch_size = inputs.shape[0]
         batch_loss = ((inputs - feedbacks) ** 2).sum(axis=1)
@@ -265,10 +281,14 @@ class SoftmaxLayer(BaseLayer):
         sum_exps = stable_exps.sum(axis=axis, keepdims=True)
         return stable_exps / sum_exps
 
+    @ensure_vector_shape
     def forward(self, inputs, feedbacks=None):
+        if inputs.shape[self.axis] == 1:
+            self.axis -= 1
         self.saved_forward = SoftmaxLayer.stable_softmax(inputs, self.axis)
         return self.saved_forward
 
+    @ensure_vector_shape
     def backward(self, gradients):
         r'''
         When $i = k$,
@@ -318,30 +338,6 @@ class SoftmaxLayer(BaseLayer):
         return jacob_x @ gradients
 
 
-class LogLayer(BaseLayer):
-    def forward(self, inputs, feedbacks=None):
-        r"""
-        $$
-        y = \log(x)
-        $$
-        """
-        self.last_inputs = inputs
-        return Tensor.log(inputs)
-
-    def backward(self, gradients):
-        r"""
-        Because this layer is element-wise operation, i.e.,
-        $J_x y = \operatorname{diag}(x^{-1})$,
-        the final gradient can be also simplified into Hadamard product:
-
-        $$
-        \nabla_x \ell = J^T_x y \cdot \nabla_y \ell = x^{-1} \odot \nabla_y \ell
-        $$
-        """
-        reciprocal = 1 / self.last_inputs
-        return reciprocal * gradients
-
-
 class LogSoftmaxLayer(BaseLayer):
     def __init__(self, *shape, axis=1):
         super().__init__()
@@ -370,6 +366,7 @@ class LogSoftmaxLayer(BaseLayer):
 
         return log_softmax, softmax
 
+    @ensure_vector_shape
     def forward(self, inputs, feedbacks=None):
         r"""
         $$
@@ -378,12 +375,15 @@ class LogSoftmaxLayer(BaseLayer):
 
         where $y_i(x) = \frac{\exp(x_i)}{\sum_j \exp(x_j)}$
         """
+        if inputs.shape[self.axis] == 1:
+            self.axis -= 1
         log_softmax, softmax = LogSoftmaxLayer.stable_log_softmax(
             inputs, self.axis
         )
         self.saved_forward = softmax
         return log_softmax
 
+    @ensure_vector_shape
     def backward(self, gradients):
         r'''
         For softmax function, when $i = k$, we have
@@ -429,7 +429,8 @@ class LogSoftmaxLayer(BaseLayer):
         softmax_dim = softmax_T.shape[-1]
         stacked = softmax_T.stacked()
         # compute Jacobian matrix wrt. inputs x
-        identity = Tensor.eye(softmax_dim, softmax_dim).unsqueeze(0)
+        identity = Tensor.eye(softmax_dim, softmax_dim)
+        identity = identity.unsqueeze_to_dim_like(stacked)
         jacob_x = identity - stacked
         return jacob_x.T @ gradients
 
@@ -439,6 +440,7 @@ class NllLossLayer(BaseLayer):
     This is to simulate PyTorch NLL layer which computes a negative expectation loss.
     Labels are passed in as integer indices.
     '''
+    @ensure_vector_shape
     def forward(self, inputs, feedbacks=None):
         r'''
         $$
@@ -495,7 +497,9 @@ class CrossEntropyLossLayer(BaseLayer):
             inputs, self.axis
         )
         use_log_softmax = log_softmax[Tensor.arange(batch_size), indices]
-        cross_entropy = - use_log_softmax.squeeze(-1)
+        cross_entropy = - use_log_softmax
+        if cross_entropy.shape[-1] == 1:
+            cross_entropy = cross_entropy.squeeze(-1)
 
         self.saved_context = (batch_size, indices, softmax)
         return self._batch_reduced(cross_entropy)
@@ -667,34 +671,54 @@ class MultiHeadAttention(BaseLayer):
         self.W_val = LinearLayer(d_full, d_full, bias=bias)
         self.scaled_dotproduct = MatrixProduct()
         self.softmax = SoftmaxLayer(axis=-1)
-        self.apply_attention = MatrixProduct()
+        self.attn_product = MatrixProduct()
 
     def split_heads(self, X):
         X = X.squeeze(-1)
         new_shape = X.shape[:-1] + (self.heads, self.d)
         X = X.reshape(new_shape)
         X = X.transpose(0, 2, 1, 3)
-        return X.unsqueeze(-1)
+        return X
 
     def merge_heads(self, X):
-        X = X.squeeze(-1)
         X = X.transpose(0, 2, 1, 3)
         new_shape = X.shape[:-2] + (self.d * self.heads,)
         X = X.reshape(new_shape)
         return X.unsqueeze(-1)
 
+    @ensure_vector_shape
     def forward(self, inputs, feedbacks=None):
         X = inputs
-
-        Q = self.split_heads(self.W_qry.forward(X))
-        K = self.split_heads(self.W_key.forward(X))
-        V = self.split_heads(self.W_val.forward(X))
+        Y_qry = self.W_qry.forward(X)
+        Y_key = self.W_key.forward(X)
+        Y_val = self.W_val.forward(X)
+        Q = self.split_heads(Y_qry)
+        K = self.split_heads(Y_key)
+        V = self.split_heads(Y_val)
 
         K = K / math.sqrt(self.d)
         product = self.scaled_dotproduct.forward((Q, K.T))
         A = self.softmax.forward(product)
-        V_attn = self.apply_attention.forward((A, V))
-        return self.merge_heads(V_attn)
+        V_attn = self.attn_product.forward((A, V))
+        V_attn = self.merge_heads(V_attn)
+        return V_attn
+
+    @ensure_vector_shape
+    def backward(self, gradients):
+        gradients = self.split_heads(gradients)
+        grads_A, grads_V = self.attn_product.backward(gradients)
+        gradients = self.softmax.backward(grads_A)
+        grads_Q, grads_KT = self.scaled_dotproduct.backward(gradients)
+        grads_K = grads_KT.T / math.sqrt(self.d)
+
+        grads_Q = self.merge_heads(grads_Q)
+        grads_K = self.merge_heads(grads_K)
+        grads_V = self.merge_heads(grads_V)
+
+        grads_X = self.W_qry.backward(grads_Q)
+        grads_X = grads_X + self.W_key.backward(grads_K)
+        grads_X = grads_X + self.W_val.backward(grads_V)
+        return grads_X
 
 
 if __name__ == '__main__':
@@ -721,15 +745,9 @@ if __name__ == '__main__':
     print(gradients.shape)
 
     softmax_layer = SoftmaxLayer()
-    outputs = softmax_layer.forward(inputs)
+    outputs = softmax_layer.forward(inputs.squeeze(-1))
     print(outputs.shape)
-    gradients = softmax_layer.backward(Tensor.randn(B, D, 1))
-    print(gradients.shape)
-
-    log_layer = LogLayer()
-    outputs = log_layer.forward(inputs)
-    print(outputs.shape)
-    gradients = log_layer.backward(Tensor.randn(B, D, 1))
+    gradients = softmax_layer.backward(Tensor.randn(B, D))
     print(gradients.shape)
 
     log_softmax_layer = LogSoftmaxLayer()
@@ -753,6 +771,8 @@ if __name__ == '__main__':
     print(gradients.shape)
 
     multihead_attn = MultiHeadAttention(d=32, heads=3)
-    inputs = Tensor.randn(2, 128, 32 * 3, 1)
+    inputs = Tensor.randn(2, 128, 32 * 3)
     outputs = multihead_attn.forward(inputs)
     print(multihead_attn.name, outputs.shape)
+    gradients = multihead_attn.backward(Tensor.randn(2, 128, 96))
+    print(gradients.shape)

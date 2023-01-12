@@ -176,19 +176,6 @@ if __name__ == '__main__':
         ])
         return inputs, targets, net
 
-    def testcase4():
-        inputs = Tensor.randn(B, 32, 1)
-        targets = Tensor.randint(shape=(B, 1), high=C)
-        net = SequentialLayers([
-            LinearLayer(32, 40),
-            ReluLayer(),
-            LinearLayer(40, C, bias=False),
-            SoftmaxLayer(),
-            LogLayer(),
-            NllLossLayer()
-        ])
-        return inputs, targets, net
-
     inputs, targets, net = globals()['testcase'+ str(testcase)]()
 
     for ep in range(1 if debug else 20):

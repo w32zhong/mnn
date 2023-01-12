@@ -177,6 +177,13 @@ class Tensor():
     def unsqueeze(self, *args, **kwargs):
         return Tensor(cp.expand_dims(self._data, *args, **kwargs))
 
+    def unsqueeze_to_dim_like(self, x):
+        offdim = len(x.shape) - len(self.shape)
+        assert offdim >= 0
+        paddim = (1 for _ in range(offdim))
+        to_dim = (*paddim, *self.shape)
+        return self.reshape(to_dim)
+
     def pr(self, quit_=False):
         import inspect
         l = inspect.stack()[1].frame.f_locals
@@ -201,4 +208,8 @@ if __name__ == '__main__':
     s = d.sum(axis=1)
     print(s)
     print(s + Tensor([[1.0, 2.0, 3.0]]))
-    s.pr()
+
+    a = Tensor.randn(3, 2)
+    b = Tensor.randn(8, 9, 10, 3, 2)
+    a = a.unsqueeze_to_dim_like(b)
+    a.pr()
