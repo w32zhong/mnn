@@ -177,6 +177,19 @@ class Tensor():
     def unsqueeze(self, *args, **kwargs):
         return Tensor(cp.expand_dims(self._data, *args, **kwargs))
 
+    def pr(self, quit_=False):
+        import inspect
+        l = inspect.stack()[1].frame.f_locals
+        g = globals()
+        for k, v in [*l.items(), *g.items(), ('self', self)]:
+            if id(v) == id(self):
+                print(f'\033[93m pr() \033[0m: {k} shape:', v.shape)
+                break
+        else:
+            raise KeyError
+        if quit_: quit()
+        return self
+
 
 if __name__ == '__main__':
     d = Tensor.randn(1, 3, 1)
@@ -188,3 +201,4 @@ if __name__ == '__main__':
     s = d.sum(axis=1)
     print(s)
     print(s + Tensor([[1.0, 2.0, 3.0]]))
+    s.pr()
