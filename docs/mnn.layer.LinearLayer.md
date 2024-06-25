@@ -50,7 +50,7 @@ $$ \nabla_W \ell = \begin{bmatrix}  x_1 \frac{\partial \ell}{\partial y_1} & x_2
 
 thus it can be written in 
 
-$$ \tag{1} \nabla_W \ell = (\nabla_y \ell)_{m \times 1} \times (x^T)_{1 \times n} $$ 
+$$ \tag{1} \nabla_W \ell = (\nabla_y \ell)_ {m \times 1} \times (x^T)_{1 \times n} $$ 
 
 ## Gradients w.r.t. $b$ 
 
